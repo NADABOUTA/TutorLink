@@ -1,81 +1,104 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+    <x-slot name="title">Inscription</x-slot>
 
-        <!-- Rôle selection -->
-        <div class="mb-4">
-            <x-input-label :value="__('Je rejoins TutorLink en tant que :')" class="font-semibold text-gray-800 dark:text-gray-200" />
-            
-            <div class="grid grid-cols-2 gap-4 mt-2">
-                <label class="cursor-pointer border-2 rounded-xl p-4 flex flex-col items-center justify-center transition-all duration-200 hover:border-indigo-500 has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 dark:has-[:checked]:bg-indigo-900/30 border-gray-200 dark:border-gray-700">
-                    <input type="radio" name="role" value="apprenant" class="sr-only" {{ old('role', 'apprenant') === 'apprenant' ? 'checked' : '' }} required>
-                    <div class="text-2xl mb-1">🎓</div>
-                    <span class="text-sm font-bold text-gray-900 dark:text-gray-100">Apprenant</span>
-                    <span class="text-xs text-gray-500 text-center mt-1">Je cherche un tuteur</span>
-                </label>
-
-                <label class="cursor-pointer border-2 rounded-xl p-4 flex flex-col items-center justify-center transition-all duration-200 hover:border-indigo-500 has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 dark:has-[:checked]:bg-indigo-900/30 border-gray-200 dark:border-gray-700">
-                    <input type="radio" name="role" value="tuteur" class="sr-only" {{ old('role') === 'tuteur' ? 'checked' : '' }} required>
-                    <div class="text-2xl mb-1">👨‍🏫</div>
-                    <span class="text-sm font-bold text-gray-900 dark:text-gray-100">Tuteur</span>
-                    <span class="text-xs text-gray-500 text-center mt-1">Je donne des cours</span>
-                </label>
+    <div class="auth-card animate-slide-up" style="max-width: 480px;">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl text-white text-xl font-bold mb-4" style="background: linear-gradient(135deg, rgb(99,102,241), rgb(168,85,247));">
+                TL
             </div>
-            <x-input-error :messages="$errors->get('role')" class="mt-2" />
+            <h1 class="text-2xl font-bold text-white">Rejoindre TutorLink ✨</h1>
+            <p class="text-sm mt-1" style="color: rgb(148,163,184);">Créez votre compte et commencez aujourd'hui</p>
         </div>
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Nom complet')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-        </div>
+        <form method="POST" action="{{ route('register') }}" x-data="{ role: '{{ old('role', 'apprenant') }}' }">
+            @csrf
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Adresse Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+            <!-- Role Selector -->
+            <div class="form-group">
+                <label class="form-label">Je rejoins en tant que</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <label class="role-card" :class="{ 'selected': role === 'apprenant' }" @click="role = 'apprenant'">
+                        <input type="radio" name="role" value="apprenant" class="sr-only" x-model="role" required>
+                        <span class="role-emoji">🎓</span>
+                        <span class="role-title">Apprenant</span>
+                        <span class="role-desc">Je cherche un tuteur</span>
+                    </label>
+                    <label class="role-card" :class="{ 'selected': role === 'tuteur' }" @click="role = 'tuteur'">
+                        <input type="radio" name="role" value="tuteur" class="sr-only" x-model="role" required>
+                        <span class="role-emoji">👨‍🏫</span>
+                        <span class="role-title">Tuteur</span>
+                        <span class="role-desc">Je donne des cours</span>
+                    </label>
+                </div>
+                @error('role')
+                    <p class="text-xs mt-1.5" style="color: rgb(239,68,68);">{{ $message }}</p>
+                @enderror
+            </div>
 
-        <!-- Téléphone -->
-        <div class="mt-4">
-            <x-input-label for="telephone" :value="__('Téléphone (optionnel)')" />
-            <x-text-input id="telephone" class="block mt-1 w-full" type="text" name="telephone" :value="old('telephone')" placeholder="06 12 34 56 78" autocomplete="tel" />
-            <x-input-error :messages="$errors->get('telephone')" class="mt-2" />
-        </div>
+            <!-- Name -->
+            <div class="form-group">
+                <label for="name" class="form-label">Nom complet</label>
+                <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus
+                       class="form-input" placeholder="Jean Dupont">
+                @error('name')
+                    <p class="text-xs mt-1.5" style="color: rgb(239,68,68);">{{ $message }}</p>
+                @enderror
+            </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Mot de passe')" />
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email" class="form-label">Adresse email</label>
+                <input id="email" type="email" name="email" value="{{ old('email') }}" required
+                       class="form-input" placeholder="vous@exemple.com">
+                @error('email')
+                    <p class="text-xs mt-1.5" style="color: rgb(239,68,68);">{{ $message }}</p>
+                @enderror
+            </div>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
+            <!-- Téléphone -->
+            <div class="form-group">
+                <label for="telephone" class="form-label">Téléphone <span style="color:rgba(148,163,184,0.5)">(optionnel)</span></label>
+                <input id="telephone" type="text" name="telephone" value="{{ old('telephone') }}"
+                       class="form-input" placeholder="06 12 34 56 78">
+                @error('telephone')
+                    <p class="text-xs mt-1.5" style="color: rgb(239,68,68);">{{ $message }}</p>
+                @enderror
+            </div>
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+            <!-- Password -->
+            <div class="form-group">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input id="password" type="password" name="password" required
+                       class="form-input" placeholder="••••••••">
+                @error('password')
+                    <p class="text-xs mt-1.5" style="color: rgb(239,68,68);">{{ $message }}</p>
+                @enderror
+            </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirmer le mot de passe')" />
+            <!-- Confirm Password -->
+            <div class="form-group">
+                <label for="password_confirmation" class="form-label">Confirmer le mot de passe</label>
+                <input id="password_confirmation" type="password" name="password_confirmation" required
+                       class="form-input" placeholder="••••••••">
+                @error('password_confirmation')
+                    <p class="text-xs mt-1.5" style="color: rgb(239,68,68);">{{ $message }}</p>
+                @enderror
+            </div>
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
+            <button type="submit" class="btn-primary w-full py-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                </svg>
+                Créer mon compte
+            </button>
+        </form>
 
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-between mt-6">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Déjà inscrit ?') }}
+        <p class="text-center text-sm mt-6" style="color: rgb(148,163,184);">
+            Déjà inscrit ?
+            <a href="{{ route('login') }}" class="font-semibold hover:underline" style="color: rgb(99,102,241);">
+                Se connecter
             </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Créer mon compte') }}
-            </x-primary-button>
-        </div>
-    </form>
+        </p>
+    </div>
 </x-guest-layout>
