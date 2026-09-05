@@ -16,6 +16,11 @@ Route::middleware('auth')->group(function () {
     // CRUD Demandes
     Route::resource('demandes', DemandeController::class);
 
+    // CRUD Offres & Acceptation
+    Route::get('/offres', [\App\Http\Controllers\OffreController::class, 'index'])->name('offres.index');
+    Route::post('/demandes/{demande}/offres', [\App\Http\Controllers\OffreController::class, 'store'])->name('demandes.offres.store');
+    Route::patch('/offres/{offre}/accepter', [\App\Http\Controllers\OffreController::class, 'accepter'])->name('offres.accepter');
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -20,6 +20,12 @@
                         {{ Auth::user()->hasRole('apprenant') ? __('Mes demandes') : __('Demandes de cours') }}
                     </x-nav-link>
 
+                    @if(Auth::user()->hasRole('tuteur') || Auth::user()->hasRole('admin'))
+                        <x-nav-link :href="route('offres.index')" :active="request()->routeIs('offres.*')">
+                            {{ __('Mes offres') }}
+                        </x-nav-link>
+                    @endif
+
                     @if(Auth::user()->hasRole('admin'))
                         <x-nav-link :href="route('admin.moderation.index')" :active="request()->routeIs('admin.moderation.*')" class="text-amber-600 dark:text-amber-400 font-semibold">
                             {{ __('🛡️ Modération') }}
@@ -84,6 +90,12 @@
             <x-responsive-nav-link :href="route('demandes.index')" :active="request()->routeIs('demandes.*')">
                 {{ Auth::user()->hasRole('apprenant') ? __('Mes demandes') : __('Demandes de cours') }}
             </x-responsive-nav-link>
+
+            @if(Auth::user()->hasRole('tuteur') || Auth::user()->hasRole('admin'))
+                <x-responsive-nav-link :href="route('offres.index')" :active="request()->routeIs('offres.*')">
+                    {{ __('Mes offres') }}
+                </x-responsive-nav-link>
+            @endif
 
             @if(Auth::user()->hasRole('admin'))
                 <x-responsive-nav-link :href="route('admin.moderation.index')" :active="request()->routeIs('admin.moderation.*')">
