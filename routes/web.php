@@ -20,6 +20,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Modération Admin
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/moderation', [\App\Http\Controllers\Admin\ModerationController::class, 'index'])->name('moderation.index');
+        Route::patch('/moderation/{demande}/approuver', [\App\Http\Controllers\Admin\ModerationController::class, 'approuver'])->name('moderation.approuver');
+        Route::patch('/moderation/{demande}/refuser', [\App\Http\Controllers\Admin\ModerationController::class, 'refuser'])->name('moderation.refuser');
+    });
 });
 
 require __DIR__.'/auth.php';

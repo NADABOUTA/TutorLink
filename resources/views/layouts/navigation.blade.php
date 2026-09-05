@@ -19,6 +19,12 @@
                     <x-nav-link :href="route('demandes.index')" :active="request()->routeIs('demandes.*')">
                         {{ Auth::user()->hasRole('apprenant') ? __('Mes demandes') : __('Demandes de cours') }}
                     </x-nav-link>
+
+                    @if(Auth::user()->hasRole('admin'))
+                        <x-nav-link :href="route('admin.moderation.index')" :active="request()->routeIs('admin.moderation.*')" class="text-amber-600 dark:text-amber-400 font-semibold">
+                            {{ __('🛡️ Modération') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -78,6 +84,12 @@
             <x-responsive-nav-link :href="route('demandes.index')" :active="request()->routeIs('demandes.*')">
                 {{ Auth::user()->hasRole('apprenant') ? __('Mes demandes') : __('Demandes de cours') }}
             </x-responsive-nav-link>
+
+            @if(Auth::user()->hasRole('admin'))
+                <x-responsive-nav-link :href="route('admin.moderation.index')" :active="request()->routeIs('admin.moderation.*')">
+                    {{ __('🛡️ Modération') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
