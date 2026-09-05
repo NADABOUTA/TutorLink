@@ -1,0 +1,40 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('demandes', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('apprenant_id')->constrained('users')->cascadeOnDelete();
+            $table->string('matiere');
+            $table->string('niveau');
+            $table->text('description');
+            $table->decimal('budget', 8, 2);
+            $table->enum('statut', [
+                'en_attente_moderation',
+                'ouverte',
+                'en_cours',
+                'terminee',
+                'refusee'
+            ])->default('en_attente_moderation');
+            $table->string('motif_refus')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('demandes');
+    }
+};
