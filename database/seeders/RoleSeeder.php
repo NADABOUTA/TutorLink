@@ -39,7 +39,7 @@ class RoleSeeder extends Seeder
         );
 
         // Utilisateur administrateur par défaut
-        $adminUser = User::firstOrCreate(
+        $adminUser = User::updateOrCreate(
             ['email' => 'admin@tutorlink.com'],
             [
                 'name' => 'Admin TutorLink',
@@ -47,9 +47,37 @@ class RoleSeeder extends Seeder
                 'telephone' => '0600000000',
             ]
         );
-
         if (!$adminUser->hasRole('admin')) {
             $adminUser->addRole($adminRole);
+        }
+
+        // Utilisateur tuteur par défaut
+        $tuteurUser = User::updateOrCreate(
+            ['email' => 'tuteur@test.com'],
+            [
+                'name' => 'NADA',
+                'password' => Hash::make('password'),
+                'telephone' => '0611223344',
+                'bio' => 'Professeur passionné et expérimenté en Mathématiques et Physique.',
+                'matiere' => 'Mathématiques',
+                'tarif_horaire' => 150,
+            ]
+        );
+        if (!$tuteurUser->hasRole('tuteur')) {
+            $tuteurUser->addRole($tuteurRole);
+        }
+
+        // Utilisateur apprenant par défaut
+        $apprenantUser = User::updateOrCreate(
+            ['email' => 'apprenant@test.com'],
+            [
+                'name' => 'TEST',
+                'password' => Hash::make('password'),
+                'telephone' => '0655443322',
+            ]
+        );
+        if (!$apprenantUser->hasRole('apprenant')) {
+            $apprenantUser->addRole($apprenantRole);
         }
     }
 }
