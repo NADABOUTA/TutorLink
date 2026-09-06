@@ -89,32 +89,60 @@
     </div>
 
     <script>
-        function suggestAIDescription() {
-            const matiere = document.getElementById('matiere').value.trim();
-            const niveau = document.getElementById('niveau').value;
-            const textarea = document.getElementById('description');
-            const btn = document.getElementById('btn-ai-suggest');
+        async function suggestAIDescription() {
+            const matiereInput = document.getElementById('matiere');
+            const niveauInput  = document.getElementById('niveau');
+            const textarea     = document.getElementById('description');
+            const btn          = document.getElementById('btn-ai-suggest');
+
+            const matiere = matiereInput.value.trim();
+            const niveau  = niveauInput.value;
 
             if (!matiere) {
-                alert('Veuillez d\'abord saisir la matière souhaitée.');
-                document.getElementById('matiere').focus();
+                alert('Veuillez d\'abord saisir la matière souhaitée (ex: Mathématiques, Physique...).');
+                matiereInput.focus();
                 return;
             }
 
-            const niveauText = niveau ? `en ${niveau}` : 'à mon niveau';
+            const originalHtml = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = '<span>⏳</span> Génération...';
+            btn.innerHTML = '<svg class="w-3.5 h-3.5 animate-spin inline-block mr-1" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Réflexion IA...';
 
-            setTimeout(() => {
-                const suggestion = `Je recherche un tuteur pédagogue et expérimenté pour un accompagnement régulier en ${matiere} (${niveauText}). Mon objectif est de consolider les bases, combler mes lacunes sur les chapitres clés et m'entraîner avec des exercices types pour réussir mes prochains examens. Rythme souhaité : 1 à 2 séances par semaine.`;
-                textarea.value = suggestion;
-                textarea.focus();
-                btn.disabled = false;
-                btn.innerHTML = '<span>✅</span> Suggestion appliquée !';
+            try {
+                const response = await fetch("{{ route('demandes.ai-suggest') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        matiere: matiere,
+                        niveau: niveau,
+                        contexte: textarea.value.trim()
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success && data.suggestion) {
+                    textarea.value = data.suggestion;
+                    textarea.focus();
+                    btn.innerHTML = '<span>✅</span> Description générée !';
+                } else {
+                    alert(data.message || 'Impossible de générer la suggestion pour le moment.');
+                    btn.innerHTML = originalHtml;
+                }
+            } catch (error) {
+                console.error('Erreur suggestion IA:', error);
+                alert('Une erreur réseau est survenue lors de la génération.');
+                btn.innerHTML = originalHtml;
+            } finally {
                 setTimeout(() => {
-                    btn.innerHTML = '<span>✨</span> Suggestion IA';
-                }, 3000);
-            }, 600);
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
+                }, 3500);
+            }
         }
     </script>
 </x-app-layout>

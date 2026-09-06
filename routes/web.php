@@ -16,6 +16,7 @@ Route::middleware('auth')->group(function () {
     // CRUD Demandes
     Route::resource('demandes', DemandeController::class);
     Route::patch('/demandes/{demande}/terminer', [DemandeController::class, 'terminer'])->name('demandes.terminer');
+    Route::post('/demandes/ai-suggest', [\App\Http\Controllers\AiSuggestionController::class, 'suggest'])->name('demandes.ai-suggest');
 
     // CRUD Offres & Acceptation
     Route::get('/offres', [\App\Http\Controllers\OffreController::class, 'index'])->name('offres.index');
