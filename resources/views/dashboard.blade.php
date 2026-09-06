@@ -56,7 +56,7 @@
         </div>
 
         {{-- Recent Demandes --}}
-        @php $recentes = Auth::user()->demandes()->latest()->take(3)->get(); @endphp
+        @php $recentes = Auth::user()->demandes()->with(['apprenant'])->latest()->take(3)->get(); @endphp
         @if($recentes->count() > 0)
         <div class="card">
             <div class="flex items-center justify-between mb-5">

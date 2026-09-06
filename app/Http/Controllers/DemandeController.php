@@ -22,6 +22,7 @@ class DemandeController extends Controller
         // Si l'utilisateur est apprenant, il consulte ses propres demandes
         if ($user->hasRole('apprenant') && !$user->hasRole('admin')) {
             $query->where('apprenant_id', $user->id)
+                  ->with(['apprenant'])
                   ->withCount('offres')
                   ->latest();
         } else {

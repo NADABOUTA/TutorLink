@@ -12,6 +12,7 @@
         "santigarcor/laratrust": "*"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "*",
         "fakerphp/faker": "^1.23",
         "laravel/boost": "*",
         "laravel/breeze": "*",
