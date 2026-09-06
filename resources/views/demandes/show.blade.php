@@ -302,7 +302,7 @@
                                                     <span class="text-xs font-semibold" style="color: rgb(234,179,8);">★ {{ $offre->tuteur->note_moyenne }}/5 ({{ $offre->tuteur->avisRecus->count() }} avis)</span>
                                                 @endif
                                                 @if($offre->statut === 'acceptee')
-                                                    <span class="badge-success">🎉 Retenue</span>
+                                                    <span class="badge-success">🎉 Offre acceptée</span>
                                                 @elseif($offre->statut === 'refusee')
                                                     <span class="badge-danger">Non retenue</span>
                                                 @else
@@ -333,7 +333,7 @@
                                     </p>
 
                                     {{-- Coordonnées débloquées si acceptée --}}
-                                    @if($offre->coordonnees_visibles)
+                                    @if($offre->statut === 'acceptee' || $offre->coordonnees_visibles)
                                         @php
                                             $cleanTelTuteur = preg_replace('/[^0-9]/', '', $offre->tuteur->telephone ?? '');
                                             if (str_starts_with($cleanTelTuteur, '0')) {
@@ -396,7 +396,12 @@
                                         <span class="text-xs block" style="color:rgb(148,163,184);">Tarif proposé</span>
                                         <span class="text-2xl font-black" style="color: rgb(99,102,241);">{{ number_format($offre->tarif_propose, 0) }} DH</span>
                                     </div>
-                                    @if(Auth::id() === $demande->apprenant_id && $demande->statut === 'ouverte' && $offre->statut === 'en_attente')
+                                    @if($offre->statut === 'acceptee')
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-400" style="background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3);">
+                                            <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                            Offre acceptée
+                                        </span>
+                                    @elseif(Auth::id() === $demande->apprenant_id && $demande->statut === 'ouverte' && $offre->statut === 'en_attente')
                                         <form method="POST" action="{{ route('offres.accepter', $offre) }}"
                                               onsubmit="return confirm('Accepter cette offre ? Les coordonnées de contact mutuelles seront immédiatement débloquées.');">
                                             @csrf @method('PATCH')

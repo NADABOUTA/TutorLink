@@ -99,9 +99,10 @@ class OffreController extends Controller
 
         // Transaction SQL atomique
         DB::transaction(function () use ($offre) {
-            // 1. Passer cette offre à acceptée
+            // 1. Passer cette offre à acceptée et débloquer les coordonnées de contact immédiatement
             $offre->update([
                 'statut' => 'acceptee',
+                'coordonnees_visibles' => true,
             ]);
 
             // 2. Passer toutes les autres offres de cette même demande à refusée
