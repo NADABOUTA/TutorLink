@@ -29,6 +29,16 @@ class User extends Authenticatable implements LaratrustUser
         'matiere',
         'bio',
         'tarif_horaire',
+        'is_active',
+    ];
+
+    /**
+     * Default model attributes.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'is_active' => true,
     ];
 
     /**
@@ -52,6 +62,7 @@ class User extends Authenticatable implements LaratrustUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'tarif_horaire' => 'decimal:2',
+            'is_active' => 'boolean',
         ];
     }
 

@@ -177,4 +177,25 @@ class DemandeController extends Controller
         return redirect()->route('demandes.index')
             ->with('success', 'La demande a été supprimée avec succès.');
     }
+
+    /**
+     * Marque la demande comme terminée par l'apprenant.
+     */
+    public function terminer(Demande $demande): RedirectResponse
+    {
+        $user = request()->user();
+
+        if ($demande->apprenant_id !== $user->id && !$user->hasRole('admin')) {
+            abort(403, "Seul l'auteur de la demande peut la clôturer.");
+        }
+
+        if ($demande->statut !== 'en_cours') {
+            return redirect()->back()->with('error', 'Seule une demande en cours peut être marquée comme terminée.');
+        }
+
+        $demande->update(['statut' => 'terminee']);
+
+        return redirect()->route('demandes.show', $demande)
+            ->with('success', 'La demande a été clôturée avec succès. Vous pouvez maintenant évaluer votre tuteur !');
+    }
 }

@@ -61,11 +61,29 @@
                 </div>
             </div>
         @elseif($demande->statut === 'en_cours')
-            <div class="alert-info">
-                <span class="text-lg">🤝</span>
+            <div class="alert-info flex items-center justify-between flex-wrap gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="text-lg">🤝</span>
+                    <div>
+                        <strong>Accompagnement en cours !</strong>
+                        <p class="text-xs mt-0.5">Une offre a été acceptée. Les coordonnées mutuelles sont visibles ci-dessous.</p>
+                    </div>
+                </div>
+                @if(Auth::id() === $demande->apprenant_id)
+                    <form method="POST" action="{{ route('demandes.terminer', $demande) }}" onsubmit="return confirm('Confirmez-vous que les séances de tutorat sont terminées ?');">
+                        @csrf @method('PATCH')
+                        <button type="submit" class="btn-primary btn-sm">
+                            ✓ Marquer comme terminée
+                        </button>
+                    </form>
+                @endif
+            </div>
+        @elseif($demande->statut === 'terminee')
+            <div class="alert-success">
+                <span class="text-lg">🎉</span>
                 <div>
-                    <strong>Accompagnement en cours !</strong>
-                    <p class="text-xs mt-0.5">Une offre a été acceptée. Les coordonnées mutuelles sont visibles ci-dessous.</p>
+                    <strong>Demande terminée !</strong>
+                    <p class="text-xs mt-0.5">Cet accompagnement pédagogique est achevé avec succès.</p>
                 </div>
             </div>
         @endif
@@ -143,6 +161,104 @@
                     <span>✔️</span>
                     <span>Vous avez déjà soumis une offre de <strong>{{ number_format($monOffre->tarif_propose, 0) }} DH</strong> — Statut : <strong>{{ $monOffre->statut }}</strong></span>
                     <a href="{{ route('offres.index') }}" class="ml-auto text-xs underline flex-shrink-0">Voir mes offres →</a>
+                </div>
+            @endif
+        @endif
+
+        @php
+            $offreRetenue = $demande->offres->where('statut', 'acceptee')->first();
+        @endphp
+
+        {{-- Section Avis / Évaluation (Phase 8) --}}
+        @if($offreRetenue)
+            @if($demande->avis)
+                {{-- Avis déjà déposé --}}
+                <div class="card" style="border-color: rgba(234,179,8,0.3); background: linear-gradient(135deg, rgba(234,179,8,0.06), rgba(99,102,241,0.03));">
+                    <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style="background: rgba(234,179,8,0.15);">
+                                ⭐
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white text-base">Évaluation de la prestation</h3>
+                                <p class="text-xs" style="color:rgb(148,163,184);">
+                                    Avis déposé par {{ $demande->apprenant->name }} pour {{ $offreRetenue->tuteur->name }} · {{ $demande->avis->created_at->translatedFormat('d F Y') }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            @for($i = 1; $i <= 5; $i++)
+                                <svg class="w-5 h-5" style="color: {{ $i <= $demande->avis->note ? '#f59e0b' : '#52525b' }};" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                            @endfor
+                            <span class="font-bold text-white ml-2 text-sm">{{ $demande->avis->note }}/5</span>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl text-sm leading-relaxed" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); color: rgb(226,232,240);">
+                        "{{ $demande->avis->commentaire }}"
+                    </div>
+                </div>
+            @elseif(Auth::id() === $demande->apprenant_id && in_array($demande->statut, ['en_cours', 'terminee']))
+                {{-- Formulaire de notation 1-5 + commentaire --}}
+                <div class="card" style="border-color: rgba(234,179,8,0.3); background: linear-gradient(135deg, rgba(234,179,8,0.06), rgba(99,102,241,0.04));"
+                     x-data="{ rating: 5, hoverRating: 0 }">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style="background: rgba(234,179,8,0.15);">
+                            ⭐
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">Évaluer votre tuteur ({{ $offreRetenue->tuteur->name }})</h3>
+                            <p class="text-xs" style="color:rgb(148,163,184);">Partagez votre avis pour aider la communauté et valoriser le travail du tuteur.</p>
+                        </div>
+                    </div>
+
+                    <form method="POST" action="{{ route('avis.store', $demande) }}" class="space-y-4">
+                        @csrf
+                        <input type="hidden" name="note" :value="rating">
+
+                        {{-- Sélecteur étoiles interactif --}}
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label">Votre note globale</label>
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-1">
+                                    <template x-for="star in [1, 2, 3, 4, 5]" :key="star">
+                                        <button type="button"
+                                                @click="rating = star"
+                                                @mouseenter="hoverRating = star"
+                                                @mouseleave="hoverRating = 0"
+                                                class="p-1 focus:outline-none transition-transform hover:scale-125 cursor-pointer">
+                                            <svg class="w-8 h-8 transition-colors duration-150"
+                                                 :style="(hoverRating ? hoverRating >= star : rating >= star) ? 'color: #f59e0b;' : 'color: #52525b;'"
+                                                 fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            </svg>
+                                        </button>
+                                    </template>
+                                </div>
+                                <span class="text-sm font-bold text-white" x-text="(hoverRating || rating) + ' / 5 étoiles'"></span>
+                            </div>
+                            @error('note')
+                                <p class="text-xs mt-1" style="color:rgb(239,68,68);">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Commentaire --}}
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="commentaire" class="form-label">Votre commentaire d'évaluation</label>
+                            <textarea id="commentaire" name="commentaire" rows="3" required class="form-textarea"
+                                      placeholder="Pédagogie, ponctualité, clarté des explications... Partagez votre retour d'expérience !">{{ old('commentaire') }}</textarea>
+                            @error('commentaire')
+                                <p class="text-xs mt-1" style="color:rgb(239,68,68);">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit" class="btn-primary" style="background: linear-gradient(135deg, rgb(234,179,8), rgb(249,115,22)); border-color: rgba(234,179,8,0.5);">
+                                ⭐ Soumettre mon avis
+                            </button>
+                        </div>
+                    </form>
                 </div>
             @endif
         @endif
