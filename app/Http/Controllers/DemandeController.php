@@ -44,7 +44,12 @@ class DemandeController extends Controller
 
         // Filtre par statut (pour les apprenants)
         if ($request->filled('statut') && $user->hasRole('apprenant')) {
-            $query->where('statut', $request->query('statut'));
+            $st = $request->query('statut');
+            if ($st === 'en_moderation' || $st === 'en_attente_moderation') {
+                $query->whereIn('statut', ['en_attente_moderation', 'en_moderation']);
+            } else {
+                $query->where('statut', $st);
+            }
         }
 
         $demandes = $query->paginate(9)->withQueryString();
@@ -112,8 +117,9 @@ class DemandeController extends Controller
         // Eager loading pour éviter le N+1 sur les relations affichées
         $demande->load([
             'apprenant',
-            'offres.tuteur',
+            'offres.tuteur.avisRecus.apprenant',
             'avis',
+            'commentaires.user',
         ]);
 
         return view('demandes.show', compact('demande'));

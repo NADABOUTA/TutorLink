@@ -26,6 +26,9 @@ Route::middleware('auth')->group(function () {
     // Avis & Évaluations (Phase 8)
     Route::post('/demandes/{demande}/avis', [\App\Http\Controllers\AvisController::class, 'store'])->name('avis.store');
 
+    // Commentaires & Échanges étudiants / tuteurs
+    Route::post('/demandes/{demande}/commentaires', [\App\Http\Controllers\CommentaireController::class, 'store'])->name('demandes.commentaires.store');
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

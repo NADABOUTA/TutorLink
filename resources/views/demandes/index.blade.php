@@ -85,11 +85,12 @@
                 @foreach($demandes as $demande)
                     @php
                         $statuts = [
-                            'en_moderation' => ['badge-pending', '⏳ En modération'],
-                            'ouverte'       => ['badge-success', '✅ Ouverte'],
-                            'en_cours'      => ['badge-info',    '🔵 En cours'],
-                            'terminee'      => ['badge-purple',  '✓ Terminée'],
-                            'refusee'       => ['badge-danger',  '✕ Refusée'],
+                            'en_attente_moderation' => ['badge-pending', '⏳ En attente'],
+                            'en_moderation'         => ['badge-pending', '⏳ En attente'],
+                            'ouverte'               => ['badge-success', '✅ Ouverte'],
+                            'en_cours'              => ['badge-info',    '🔵 En cours'],
+                            'terminee'              => ['badge-purple',  '✓ Terminée'],
+                            'refusee'               => ['badge-danger',  '✕ Refusée'],
                         ];
                         [$badgeCls, $badgeLabel] = $statuts[$demande->statut] ?? ['badge-info', $demande->statut];
                     @endphp

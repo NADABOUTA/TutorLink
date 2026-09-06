@@ -17,23 +17,33 @@ class ModerationController extends Controller
     public function index(Request $request): View
     {
         $status = $request->query('statut', 'en_attente_moderation');
+        if ($status === 'en_moderation') {
+            $status = 'en_attente_moderation';
+        }
 
         $query = Demande::with(['apprenant'])
             ->withCount('offres')
             ->latest();
 
         if ($status !== 'all') {
-            $query->where('statut', $status);
+            if ($status === 'en_attente_moderation') {
+                $query->whereIn('statut', ['en_attente_moderation', 'en_moderation']);
+            } else {
+                $query->where('statut', $status);
+            }
         }
 
         $demandes = $query->paginate(10)->withQueryString();
 
+        $enAttenteCount = Demande::whereIn('statut', ['en_attente_moderation', 'en_moderation'])->count();
+
         // Statistiques de modération pour les onglets
         $counts = [
-            'en_attente_moderation' => Demande::where('statut', 'en_attente_moderation')->count(),
-            'ouverte' => Demande::where('statut', 'ouverte')->count(),
-            'refusee' => Demande::where('statut', 'refusee')->count(),
-            'all' => Demande::count(),
+            'en_attente_moderation' => $enAttenteCount,
+            'en_moderation'         => $enAttenteCount,
+            'ouverte'               => Demande::where('statut', 'ouverte')->count(),
+            'refusee'               => Demande::where('statut', 'refusee')->count(),
+            'all'                   => Demande::count(),
         ];
 
         return view('admin.moderation.index', compact('demandes', 'counts', 'status'));

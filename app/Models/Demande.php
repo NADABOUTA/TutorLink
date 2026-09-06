@@ -52,4 +52,12 @@ class Demande extends Model
     {
         return $this->hasOne(Avis::class, 'demande_id');
     }
+
+    /**
+     * Les commentaires et échanges sur cette demande.
+     */
+    public function commentaires(): HasMany
+    {
+        return $this->hasMany(Commentaire::class, 'demande_id')->latest();
+    }
 }

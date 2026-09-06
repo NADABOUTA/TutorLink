@@ -140,7 +140,7 @@
             $totalUsers    = \App\Models\User::count();
             $totalDemandes = \App\Models\Demande::count();
             $totalOffres   = \App\Models\Offre::count();
-            $pendingMod    = \App\Models\Demande::where('statut', 'en_moderation')->count();
+            $pendingMod    = \App\Models\Demande::whereIn('statut', ['en_attente_moderation', 'en_moderation'])->count();
         @endphp
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
             <div class="stat-card indigo">

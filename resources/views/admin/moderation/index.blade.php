@@ -25,18 +25,21 @@
         <div class="flex flex-wrap gap-2 pb-4" style="border-bottom: 1px solid rgba(255,255,255,0.06);">
             @php
                 $tabs = [
-                    'en_moderation' => ['⏳ À modérer', 'rgba(234,179,8,0.2)', 'rgba(234,179,8,0.4)', 'rgb(234,179,8)', $counts['en_moderation']],
-                    'ouverte'       => ['✅ Ouvertes', 'rgba(34,197,94,0.2)', 'rgba(34,197,94,0.4)', 'rgb(34,197,94)', $counts['ouverte']],
-                    'refusee'       => ['❌ Refusées', 'rgba(239,68,68,0.2)', 'rgba(239,68,68,0.4)', 'rgb(239,68,68)', $counts['refusee']],
-                    'all'           => ['📋 Toutes', 'rgba(99,102,241,0.2)', 'rgba(99,102,241,0.4)', 'rgb(99,102,241)', $counts['all']],
+                    'en_attente_moderation' => ['⏳ À modérer', 'rgba(234,179,8,0.2)', 'rgba(234,179,8,0.4)', 'rgb(234,179,8)', $counts['en_attente_moderation']],
+                    'ouverte'               => ['✅ Ouvertes', 'rgba(34,197,94,0.2)', 'rgba(34,197,94,0.4)', 'rgb(34,197,94)', $counts['ouverte']],
+                    'refusee'               => ['❌ Refusées', 'rgba(239,68,68,0.2)', 'rgba(239,68,68,0.4)', 'rgb(239,68,68)', $counts['refusee']],
+                    'all'                   => ['📋 Toutes', 'rgba(99,102,241,0.2)', 'rgba(99,102,241,0.4)', 'rgb(99,102,241)', $counts['all']],
                 ];
             @endphp
             @foreach($tabs as $key => [$label, $bg, $border, $color, $count])
+                @php
+                    $isActive = ($status === $key) || ($key === 'en_attente_moderation' && $status === 'en_moderation');
+                @endphp
                 <a href="{{ route('admin.moderation.index', ['statut' => $key]) }}"
                    class="px-4 py-2 text-sm font-semibold rounded-xl transition-all flex items-center gap-2"
-                   style="{{ $status === $key ? "background: {$bg}; border: 1px solid {$border}; color: {$color};" : 'background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: rgb(148,163,184);' }}">
+                   style="{{ $isActive ? "background: {$bg}; border: 1px solid {$border}; color: {$color};" : 'background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: rgb(148,163,184);' }}">
                     {{ $label }}
-                    <span class="px-1.5 py-0.5 rounded-full text-xs" style="{{ $status === $key ? "background: {$bg}; color:{$color};" : 'background: rgba(255,255,255,0.05); color: rgb(148,163,184);' }}">{{ $count }}</span>
+                    <span class="px-1.5 py-0.5 rounded-full text-xs" style="{{ $isActive ? "background: {$bg}; color:{$color};" : 'background: rgba(255,255,255,0.05); color: rgb(148,163,184);' }}">{{ $count }}</span>
                 </a>
             @endforeach
         </div>
@@ -55,11 +58,12 @@
                 @foreach($demandes as $demande)
                     @php
                         $statuts = [
-                            'en_moderation' => ['badge-pending', '⏳ En modération'],
-                            'ouverte'       => ['badge-success', '✅ Ouverte'],
-                            'en_cours'      => ['badge-info',    '🔵 En cours'],
-                            'terminee'      => ['badge-purple',  '✓ Terminée'],
-                            'refusee'       => ['badge-danger',  '✕ Refusée'],
+                            'en_attente_moderation' => ['badge-pending', '⏳ En modération'],
+                            'en_moderation'         => ['badge-pending', '⏳ En modération'],
+                            'ouverte'               => ['badge-success', '✅ Ouverte'],
+                            'en_cours'              => ['badge-info',    '🔵 En cours'],
+                            'terminee'              => ['badge-purple',  '✓ Terminée'],
+                            'refusee'               => ['badge-danger',  '✕ Refusée'],
                         ];
                         [$badgeCls, $badgeLabel] = $statuts[$demande->statut] ?? ['badge-info', $demande->statut];
                     @endphp

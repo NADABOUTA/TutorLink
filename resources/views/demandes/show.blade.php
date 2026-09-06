@@ -4,11 +4,12 @@
             <div>
                 @php
                     $statuts = [
-                        'en_moderation' => ['badge-pending', '⏳ En modération'],
-                        'ouverte'       => ['badge-success', '✅ Ouverte'],
-                        'en_cours'      => ['badge-info',    '🔵 En cours'],
-                        'terminee'      => ['badge-purple',  '✓ Terminée'],
-                        'refusee'       => ['badge-danger',  '✕ Refusée'],
+                        'en_attente_moderation' => ['badge-pending', '⏳ En attente de modération'],
+                        'en_moderation'         => ['badge-pending', '⏳ En attente de modération'],
+                        'ouverte'               => ['badge-success', '✅ Ouverte aux professeurs'],
+                        'en_cours'              => ['badge-info',    '🔵 En cours'],
+                        'terminee'              => ['badge-purple',  '✓ Terminée'],
+                        'refusee'               => ['badge-danger',  '✕ Refusée'],
                     ];
                     [$badgeCls, $badgeLabel] = $statuts[$demande->statut] ?? ['badge-info', $demande->statut];
                 @endphp
@@ -41,12 +42,12 @@
     <div class="max-w-5xl mx-auto space-y-6">
 
         {{-- Alerte statut --}}
-        @if($demande->statut === 'en_moderation')
+        @if(in_array($demande->statut, ['en_attente_moderation', 'en_moderation']))
             <div class="alert-warning">
                 <span class="text-lg">⏳</span>
                 <div>
-                    <strong>En cours d'examen</strong>
-                    <p class="text-xs mt-0.5">Votre demande est en attente de validation par un modérateur. Elle sera visible aux tuteurs dès approbation.</p>
+                    <strong>Demande en attente de modération</strong>
+                    <p class="text-xs mt-0.5">Votre demande est en cours d'examen par un administrateur. Dès qu'elle sera validée, elle deviendra visible et les professeurs qualifiés pourront vous soumettre leurs offres.</p>
                 </div>
             </div>
         @elseif($demande->statut === 'refusee')
@@ -298,44 +299,90 @@
                                             <div class="flex items-center gap-2 flex-wrap">
                                                 <h3 class="font-bold text-white">{{ $offre->tuteur->name }}</h3>
                                                 @if($offre->tuteur->note_moyenne)
-                                                    <span class="text-xs font-semibold" style="color: rgb(234,179,8);">★ {{ $offre->tuteur->note_moyenne }}/5</span>
+                                                    <span class="text-xs font-semibold" style="color: rgb(234,179,8);">★ {{ $offre->tuteur->note_moyenne }}/5 ({{ $offre->tuteur->avisRecus->count() }} avis)</span>
                                                 @endif
                                                 @if($offre->statut === 'acceptee')
-                                                    <span class="badge-success">🎉 Acceptée</span>
+                                                    <span class="badge-success">🎉 Retenue</span>
                                                 @elseif($offre->statut === 'refusee')
                                                     <span class="badge-danger">Non retenue</span>
                                                 @else
                                                     <span class="badge-pending">En attente</span>
                                                 @endif
                                             </div>
-                                            @if($offre->tuteur->matiere)
-                                                <p class="text-xs" style="color:rgb(148,163,184);">Spécialité : {{ $offre->tuteur->matiere }}</p>
-                                            @endif
+                                            <div class="flex items-center gap-3 flex-wrap mt-0.5">
+                                                @if($offre->tuteur->matiere)
+                                                    <span class="text-xs" style="color:rgb(148,163,184);">📚 Spécialité : {{ $offre->tuteur->matiere }}</span>
+                                                @endif
+                                                @if($offre->tuteur->tarif_horaire)
+                                                    <span class="text-xs" style="color:rgb(148,163,184);">⏱️ Tarif usuel : {{ number_format($offre->tuteur->tarif_horaire, 0) }} DH/h</span>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
 
-                                    {{-- Message --}}
+                                    {{-- Bio du professeur si renseignée --}}
+                                    @if($offre->tuteur->bio)
+                                        <div class="p-3 rounded-xl text-xs leading-relaxed" style="background: rgba(168,85,247,0.04); border: 1px solid rgba(168,85,247,0.15); color: rgb(216,180,254);">
+                                            <strong>À propos du tuteur :</strong> {{ $offre->tuteur->bio }}
+                                        </div>
+                                    @endif
+
+                                    {{-- Message de proposition --}}
                                     <p class="text-sm leading-relaxed p-4 rounded-xl" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); color: rgb(203,213,225);">
                                         {{ $offre->message }}
                                     </p>
 
-                                    {{-- Coordonnées si acceptée --}}
+                                    {{-- Coordonnées débloquées si acceptée --}}
                                     @if($offre->coordonnees_visibles)
+                                        @php
+                                            $cleanTelTuteur = preg_replace('/[^0-9]/', '', $offre->tuteur->telephone ?? '');
+                                            if (str_starts_with($cleanTelTuteur, '0')) {
+                                                $cleanTelTuteur = '212' . substr($cleanTelTuteur, 1);
+                                            }
+
+                                            $cleanTelApprenant = preg_replace('/[^0-9]/', '', $demande->apprenant->telephone ?? '');
+                                            if (str_starts_with($cleanTelApprenant, '0')) {
+                                                $cleanTelApprenant = '212' . substr($cleanTelApprenant, 1);
+                                            }
+                                        @endphp
                                         <div class="p-4 rounded-xl" style="background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.25);">
-                                            <p class="text-xs font-bold mb-3" style="color: rgb(34,197,94);">📞 Coordonnées débloquées</p>
+                                            <p class="text-xs font-bold mb-3 flex items-center gap-1.5" style="color: rgb(34,197,94);">
+                                                <span>📞</span> Coordonnées de contact débloquées
+                                            </p>
                                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                <div class="p-3 rounded-lg" style="background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.15);">
-                                                    <p class="text-xs font-semibold text-white mb-1">👨‍🏫 {{ $offre->tuteur->name }}</p>
-                                                    <p class="text-xs" style="color:rgb(148,163,184);">📧 <a href="mailto:{{ $offre->tuteur->email }}" class="hover:underline" style="color:rgb(99,102,241);">{{ $offre->tuteur->email }}</a></p>
+                                                {{-- Fiche Tuteur --}}
+                                                <div class="p-3 rounded-lg space-y-2" style="background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.15);">
+                                                    <p class="text-xs font-semibold text-white">👨‍🏫 Tuteur : {{ $offre->tuteur->name }}</p>
+                                                    <p class="text-xs" style="color:rgb(148,163,184);">📧 <a href="mailto:{{ $offre->tuteur->email }}" class="hover:underline text-white">{{ $offre->tuteur->email }}</a></p>
                                                     @if($offre->tuteur->telephone)
-                                                        <p class="text-xs" style="color:rgb(148,163,184);">📱 <a href="tel:{{ $offre->tuteur->telephone }}" class="hover:underline text-white">{{ $offre->tuteur->telephone }}</a></p>
+                                                        <div class="flex items-center gap-2 pt-1 flex-wrap">
+                                                            <a href="tel:{{ $offre->tuteur->telephone }}" class="btn-secondary btn-sm text-[11px] py-1 px-2.5">
+                                                                📞 Appeler
+                                                            </a>
+                                                            @if($cleanTelTuteur)
+                                                                <a href="https://wa.me/{{ $cleanTelTuteur }}" target="_blank" class="btn-success btn-sm text-[11px] py-1 px-2.5">
+                                                                    💬 WhatsApp
+                                                                </a>
+                                                            @endif
+                                                        </div>
                                                     @endif
                                                 </div>
-                                                <div class="p-3 rounded-lg" style="background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.15);">
-                                                    <p class="text-xs font-semibold text-white mb-1">🎓 {{ $demande->apprenant->name }}</p>
-                                                    <p class="text-xs" style="color:rgb(148,163,184);">📧 <a href="mailto:{{ $demande->apprenant->email }}" class="hover:underline" style="color:rgb(99,102,241);">{{ $demande->apprenant->email }}</a></p>
+
+                                                {{-- Fiche Apprenant --}}
+                                                <div class="p-3 rounded-lg space-y-2" style="background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.15);">
+                                                    <p class="text-xs font-semibold text-white">🎓 Apprenant : {{ $demande->apprenant->name }}</p>
+                                                    <p class="text-xs" style="color:rgb(148,163,184);">📧 <a href="mailto:{{ $demande->apprenant->email }}" class="hover:underline text-white">{{ $demande->apprenant->email }}</a></p>
                                                     @if($demande->apprenant->telephone)
-                                                        <p class="text-xs" style="color:rgb(148,163,184);">📱 <a href="tel:{{ $demande->apprenant->telephone }}" class="hover:underline text-white">{{ $demande->apprenant->telephone }}</a></p>
+                                                        <div class="flex items-center gap-2 pt-1 flex-wrap">
+                                                            <a href="tel:{{ $demande->apprenant->telephone }}" class="btn-secondary btn-sm text-[11px] py-1 px-2.5">
+                                                                📞 Appeler
+                                                            </a>
+                                                            @if($cleanTelApprenant)
+                                                                <a href="https://wa.me/{{ $cleanTelApprenant }}" target="_blank" class="btn-success btn-sm text-[11px] py-1 px-2.5">
+                                                                    💬 WhatsApp
+                                                                </a>
+                                                            @endif
+                                                        </div>
                                                     @endif
                                                 </div>
                                             </div>
@@ -351,15 +398,89 @@
                                     </div>
                                     @if(Auth::id() === $demande->apprenant_id && $demande->statut === 'ouverte' && $offre->statut === 'en_attente')
                                         <form method="POST" action="{{ route('offres.accepter', $offre) }}"
-                                              onsubmit="return confirm('Accepter cette offre ? Les autres propositions seront refusées.');">
+                                              onsubmit="return confirm('Accepter cette offre ? Les coordonnées de contact mutuelles seront immédiatement débloquées.');">
                                             @csrf @method('PATCH')
                                             <button type="submit" class="btn-success btn-sm">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                                Accepter
+                                                Accepter cette offre
                                             </button>
                                         </form>
                                     @endif
                                 </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
+        {{-- Section Discussion & Commentaires (Échanges Apprenant / Tuteur) --}}
+        <div class="card" id="espace-commentaires">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style="background: rgba(99,102,241,0.15);">
+                        💬
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-white">Discussion & Questions</h2>
+                        <p class="text-xs" style="color:rgb(148,163,184);">Échangez librement sur les créneaux, les détails des cours ou les méthodes pédagogiques.</p>
+                    </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-lg text-xs font-semibold" style="background: rgba(99,102,241,0.15); color: rgb(99,102,241);">
+                    {{ $demande->commentaires->count() }} message(s)
+                </span>
+            </div>
+
+            {{-- Formulaire d'envoi de message --}}
+            <form method="POST" action="{{ route('demandes.commentaires.store', $demande) }}" class="space-y-3 mb-6 p-4 rounded-xl" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);">
+                @csrf
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="contenu" class="form-label text-xs">Votre message</label>
+                    <textarea id="contenu" name="contenu" rows="2" required class="form-textarea text-sm"
+                              placeholder="Bonjour, je voulais savoir si vous donnez des cours le weekend ou en distanciel ?"></textarea>
+                    @error('contenu')
+                        <p class="text-xs mt-1" style="color:rgb(239,68,68);">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" class="btn-primary btn-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                        Envoyer le message
+                    </button>
+                </div>
+            </form>
+
+            {{-- Liste des commentaires --}}
+            @if($demande->commentaires->isEmpty())
+                <div class="empty-state py-8">
+                    <div class="empty-state-icon">💭</div>
+                    <p class="empty-state-title text-sm">Aucun message pour le moment</p>
+                    <p class="empty-state-desc text-xs">Posez une question ou engagez la discussion pour convenir des modalités.</p>
+                </div>
+            @else
+                <div class="space-y-3">
+                    @foreach($demande->commentaires as $com)
+                        <div class="p-4 rounded-xl flex items-start gap-3 transition-colors"
+                             style="background: {{ $com->user_id === Auth::id() ? 'rgba(99,102,241,0.08)' : 'rgba(255,255,255,0.03)' }}; border: 1px solid {{ $com->user_id === Auth::id() ? 'rgba(99,102,241,0.25)' : 'rgba(255,255,255,0.05)' }};">
+                            <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                                 style="background: {{ $com->user->hasRole('tuteur') ? 'linear-gradient(135deg, rgb(168,85,247), rgb(236,72,153))' : 'linear-gradient(135deg, rgb(99,102,241), rgb(59,130,246))' }};">
+                                {{ strtoupper(substr($com->user->name, 0, 2)) }}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap mb-1">
+                                    <span class="font-bold text-white text-xs">{{ $com->user->name }}</span>
+                                    @if($com->user->hasRole('tuteur'))
+                                        <span class="badge-info text-[10px] px-1.5 py-0.5">👨‍🏫 Tuteur</span>
+                                    @elseif($com->user->hasRole('admin'))
+                                        <span class="badge-purple text-[10px] px-1.5 py-0.5">🛡️ Admin</span>
+                                    @else
+                                        <span class="badge-success text-[10px] px-1.5 py-0.5">🎓 Apprenant</span>
+                                    @endif
+                                    <span class="text-[11px]" style="color:rgb(148,163,184);">· {{ $com->created_at->diffForHumans() }}</span>
+                                </div>
+                                <p class="text-xs leading-relaxed" style="color: rgb(226,232,240);">
+                                    {{ $com->contenu }}
+                                </p>
                             </div>
                         </div>
                     @endforeach
