@@ -70,6 +70,19 @@
                 </a>
             @endif
 
+            <a href="{{ route('notifications.index') }}"
+               class="sidebar-item {{ request()->routeIs('notifications.*') ? 'active' : '' }}">
+                <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                <span class="flex-1">Notifications</span>
+                @if(Auth::user()->unreadNotifications->count() > 0)
+                    <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black bg-rose-500 text-white">
+                        {{ Auth::user()->unreadNotifications->count() }}
+                    </span>
+                @endif
+            </a>
+
             @if(Auth::user()->hasRole('admin'))
                 <div class="divider" style="margin: 12px 0;"></div>
                 <p class="sidebar-section-label mb-3">Administration</p>
@@ -131,15 +144,140 @@
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
-        <!-- Top Bar (mobile) -->
-        <div class="flex items-center gap-4 px-6 py-4 lg:hidden" style="background: rgb(22,22,38); border-bottom: 1px solid rgba(255,255,255,0.06);">
-            <button @click="sidebarOpen = true" class="p-2 rounded-lg hover:bg-white/10 transition-colors" style="color: rgb(148,163,184);">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                </svg>
-            </button>
-            <span class="font-bold text-white">TutorLink</span>
-        </div>
+        <!-- TOP NAVBAR (Desktop & Mobile avec Cloche Notifications) -->
+        <header class="flex items-center justify-between px-6 py-3.5 sticky top-0 z-30"
+                style="background: rgba(15,15,25,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.06);">
+            
+            <!-- Left: Mobile menu button & breadcrumbs -->
+            <div class="flex items-center gap-3">
+                <button @click="sidebarOpen = true" class="p-2 rounded-xl hover:bg-white/10 transition-colors lg:hidden" style="color: rgb(148,163,184);">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-white text-base lg:hidden">TutorLink</span>
+                    <div class="hidden lg:flex items-center gap-2 text-xs" style="color: rgb(148,163,184);">
+                        <span>TutorLink</span>
+                        <span>/</span>
+                        <span class="text-white font-medium">{{ $title ?? 'Espace membre' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Interactive Notification Bell & Profile -->
+            <div class="flex items-center gap-3" x-data="{ notifOpen: false }">
+                
+                {{-- CLOCHE DE NOTIFICATIONS --}}
+                <div class="relative">
+                    @php
+                        $unreadNotifCount = Auth::user()->unreadNotifications->count();
+                        $recentNotifs = Auth::user()->notifications()->take(5)->get();
+                    @endphp
+
+                    <button @click="notifOpen = !notifOpen"
+                            class="relative p-2.5 rounded-xl transition-all duration-200 hover:bg-white/10 focus:outline-none flex items-center justify-center cursor-pointer"
+                            :class="{ 'bg-white/10 text-white': notifOpen, 'text-slate-300': !notifOpen }"
+                            style="border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03);"
+                            title="Notifications">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+
+                        {{-- Badge non lu --}}
+                        @if($unreadNotifCount > 0)
+                            <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-black flex items-center justify-center text-white bg-rose-500 shadow-lg shadow-rose-500/50 animate-pulse">
+                                {{ $unreadNotifCount > 9 ? '9+' : $unreadNotifCount }}
+                            </span>
+                        @endif
+                    </button>
+
+                    {{-- DROPDOWN MENU --}}
+                    <div x-show="notifOpen"
+                         @click.away="notifOpen = false"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+                         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 scale-95 -translate-y-2"
+                         class="absolute right-0 mt-3 w-80 sm:w-96 rounded-2xl shadow-2xl overflow-hidden z-50"
+                         style="display: none; background: rgb(22,22,38); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+                        
+                        {{-- Header Dropdown --}}
+                        <div class="flex items-center justify-between px-4 py-3.5" style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-bold text-white">Notifications</span>
+                                @if($unreadNotifCount > 0)
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                                        {{ $unreadNotifCount }} nouvelle(s)
+                                    </span>
+                                @endif
+                            </div>
+                            @if($unreadNotifCount > 0)
+                                <form method="POST" action="{{ route('notifications.markAllRead') }}">
+                                    @csrf
+                                    <button type="submit" class="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 hover:underline cursor-pointer bg-transparent border-none">
+                                        Tout marquer lu
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+
+                        {{-- Liste des 5 dernières notifications --}}
+                        <div class="max-h-80 overflow-y-auto divide-y divide-white/5">
+                            @forelse($recentNotifs as $notifItem)
+                                @php
+                                    $nData = $notifItem->data;
+                                    $isItemUnread = is_null($notifItem->read_at);
+                                @endphp
+                                <form method="POST" action="{{ route('notifications.read', $notifItem->id) }}">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="w-full text-left p-3.5 flex items-start gap-3 hover:bg-white/5 transition-colors cursor-pointer {{ $isItemUnread ? 'bg-indigo-500/[0.08]' : '' }}">
+                                        <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0 mt-0.5"
+                                             style="background: {{ $isItemUnread ? 'rgba(99,102,241,0.25)' : 'rgba(255,255,255,0.05)' }};">
+                                            {{ $nData['icon'] ?? '🔔' }}
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center justify-between gap-1 mb-0.5">
+                                                <p class="text-xs font-bold text-white truncate">{{ $nData['title'] ?? 'Notification' }}</p>
+                                                <span class="text-[10px]" style="color: rgb(148,163,184);">{{ $notifItem->created_at->diffForHumans(null, true, true) }}</span>
+                                            </div>
+                                            <p class="text-xs line-clamp-2 leading-relaxed" style="color: rgb(203,213,225);">{{ $nData['message'] ?? '' }}</p>
+                                        </div>
+                                        @if($isItemUnread)
+                                            <span class="w-2 h-2 rounded-full bg-indigo-400 mt-2 flex-shrink-0"></span>
+                                        @endif
+                                    </button>
+                                </form>
+                            @empty
+                                <div class="py-8 text-center px-4">
+                                    <span class="text-2xl block mb-2">🔔</span>
+                                    <p class="text-xs font-semibold text-white">Aucune notification pour le moment</p>
+                                    <p class="text-[11px] mt-1" style="color: rgb(148,163,184);">Vous serez notifié dès qu'un tuteur ou apprenant interagit avec vous.</p>
+                                </div>
+                            @endforelse
+                        </div>
+
+                        {{-- Footer Dropdown --}}
+                        <div class="p-2.5 text-center" style="border-top: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);">
+                            <a href="{{ route('notifications.index') }}" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 hover:underline inline-flex items-center gap-1.5" style="text-decoration:none;">
+                                <span>Voir toutes les notifications</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- User mini avatar shortcut --}}
+                <a href="{{ route('profile.edit') }}" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white transition-opacity hover:opacity-80"
+                   style="background: linear-gradient(135deg, rgb(99,102,241), rgb(168,85,247)); text-decoration:none;"
+                   title="{{ Auth::user()->name }}">
+                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                </a>
+            </div>
+        </header>
 
         <!-- Page Header -->
         @isset($header)

@@ -59,6 +59,9 @@ class ModerationController extends Controller
             'motif_refus' => null,
         ]);
 
+        // Notifier l'apprenant que sa demande a été approuvée
+        $demande->apprenant->notify(new \App\Notifications\DemandeApprouveeNotification($demande));
+
         return redirect()->back()
             ->with('success', "La demande #{$demande->id} ({$demande->matiere} - {$demande->niveau}) a été approuvée. Elle est maintenant visible par les tuteurs.");
     }
@@ -68,10 +71,15 @@ class ModerationController extends Controller
      */
     public function refuser(RefusDemandeRequest $request, Demande $demande): RedirectResponse
     {
+        $motif = $request->validated('motif_refus');
+
         $demande->update([
             'statut' => 'refusee',
-            'motif_refus' => $request->validated('motif_refus'),
+            'motif_refus' => $motif,
         ]);
+
+        // Notifier l'apprenant du motif de rejet
+        $demande->apprenant->notify(new \App\Notifications\DemandeRejeteeNotification($demande, $motif));
 
         return redirect()->back()
             ->with('success', "La demande #{$demande->id} a été refusée avec succès. L'apprenant a été notifié du motif de rejet.");

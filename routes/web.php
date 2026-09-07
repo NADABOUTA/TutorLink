@@ -29,6 +29,11 @@ Route::middleware('auth')->group(function () {
     // Commentaires & Échanges étudiants / tuteurs
     Route::post('/demandes/{demande}/commentaires', [\App\Http\Controllers\CommentaireController::class, 'store'])->name('demandes.commentaires.store');
 
+    // Notifications in-app (Cloche & Historique)
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'read'])->name('notifications.read');
+    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

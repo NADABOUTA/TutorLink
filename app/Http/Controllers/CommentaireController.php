@@ -31,12 +31,24 @@ class CommentaireController extends Controller
             'contenu.max'      => 'Votre message ne peut pas dépasser 1000 caractères.',
         ]);
 
-        Commentaire::create([
+        $commentaire = Commentaire::create([
             'demande_id' => $demande->id,
             'user_id'    => $user->id,
             'offre_id'   => $validated['offre_id'] ?? null,
             'contenu'    => $validated['contenu'],
         ]);
+
+        // Notifier les autres participants de la discussion
+        if ($demande->apprenant_id !== $user->id) {
+            $demande->apprenant->notify(new \App\Notifications\NouveauCommentaireNotification($commentaire));
+        } else {
+            // Si c'est l'apprenant qui répond, notifier les tuteurs ayant postulé
+            foreach ($demande->offres as $offre) {
+                if ($offre->tuteur_id !== $user->id) {
+                    $offre->tuteur->notify(new \App\Notifications\NouveauCommentaireNotification($commentaire));
+                }
+            }
+        }
 
         return redirect()->back()->with('success', 'Votre message a été envoyé avec succès !');
     }

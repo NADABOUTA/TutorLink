@@ -68,13 +68,16 @@ class OffreController extends Controller
         }
 
         // 4. Création de l'offre
-        $demande->offres()->create([
+        $offre = $demande->offres()->create([
             'tuteur_id' => $user->id,
             'tarif_propose' => $request->validated('tarif_propose'),
             'message' => $request->validated('message'),
             'statut' => 'en_attente',
             'coordonnees_visibles' => false,
         ]);
+
+        // Notifier l'apprenant de la nouvelle offre
+        $demande->apprenant->notify(new \App\Notifications\NouvelleOffreNotification($offre));
 
         return redirect()->route('demandes.show', $demande)
             ->with('success', 'Votre proposition d\'offre a été transmise à l\'apprenant avec succès !');
@@ -116,7 +119,10 @@ class OffreController extends Controller
             ]);
         });
 
-        // 4. Déclencher l'événement OffreAcceptee (déclenche listener -> job queue -> coordonnees_visibles = true)
+        // 4. Notifier le tuteur dont l'offre a été retenue
+        $offre->tuteur->notify(new \App\Notifications\OffreAccepteeNotification($offre));
+
+        // 5. Déclencher l'événement OffreAcceptee
         event(new OffreAcceptee($offre));
 
         return redirect()->route('demandes.show', $offre->demande_id)
