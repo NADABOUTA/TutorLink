@@ -2,12 +2,20 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Role::firstOrCreate(['name' => 'apprenant'], ['display_name' => 'Apprenant']);
+        Role::firstOrCreate(['name' => 'tuteur'], ['display_name' => 'Tuteur']);
+    }
 
     public function test_registration_screen_can_be_rendered(): void
     {
@@ -23,6 +31,8 @@ class RegistrationTest extends TestCase
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
+            'role' => 'apprenant',
+            'telephone' => '0612345678',
         ]);
 
         $this->assertAuthenticated();
