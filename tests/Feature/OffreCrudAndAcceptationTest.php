@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Demande;
 use App\Models\Offre;
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -21,10 +20,6 @@ class OffreCrudAndAcceptationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        Role::firstOrCreate(['name' => 'admin'], ['display_name' => 'Admin']);
-        Role::firstOrCreate(['name' => 'tuteur'], ['display_name' => 'Tuteur']);
-        Role::firstOrCreate(['name' => 'apprenant'], ['display_name' => 'Apprenant']);
 
         $this->apprenant = User::factory()->create([
             'name' => 'Sara Apprenante',

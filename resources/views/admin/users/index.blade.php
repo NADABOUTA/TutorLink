@@ -131,17 +131,13 @@
                                 </td>
                                 <td>
                                     <div class="flex flex-wrap gap-1.5">
-                                        @forelse($user->roles as $role)
-                                            @if($role->name === 'admin')
-                                                <span class="badge-purple">Admin</span>
-                                            @elseif($role->name === 'tuteur')
-                                                <span class="badge-info">Tuteur</span>
-                                            @else
-                                                <span class="badge-success">Apprenant</span>
-                                            @endif
-                                        @empty
-                                            <span class="badge-pending">Sans rôle</span>
-                                        @endforelse
+                                        @if($user->isAdmin())
+                                            <span class="badge-purple">Admin</span>
+                                        @elseif($user->isTuteur())
+                                            <span class="badge-info">Tuteur</span>
+                                        @else
+                                            <span class="badge-success">Apprenant</span>
+                                        @endif
                                     </div>
                                     @if($user->matiere)
                                         <p class="text-xs mt-1" style="color:rgb(148,163,184);">Matière : {{ $user->matiere }}</p>

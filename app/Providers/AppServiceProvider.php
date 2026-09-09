@@ -30,5 +30,12 @@ class AppServiceProvider extends ServiceProvider
             OffreAcceptee::class,
             EnvoyerNotificationEtCoordonnees::class
         );
+
+        // Définition des Gates d'autorisation natives
+        \Illuminate\Support\Facades\Gate::define('admin', fn(\App\Models\User $user) => $user->isAdmin());
+        \Illuminate\Support\Facades\Gate::define('tuteur', fn(\App\Models\User $user) => $user->isTuteur());
+        \Illuminate\Support\Facades\Gate::define('apprenant', fn(\App\Models\User $user) => $user->isApprenant());
+        \Illuminate\Support\Facades\Gate::define('manage-users', fn(\App\Models\User $user) => $user->isAdmin());
+        \Illuminate\Support\Facades\Gate::define('moderate-demandes', fn(\App\Models\User $user) => $user->isAdmin());
     }
 }

@@ -16,7 +16,7 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = User::with(['roles', 'avisRecus'])
+        $query = User::with(['avisRecus'])
             ->withCount(['demandes', 'offres'])
             ->latest();
 
@@ -33,9 +33,7 @@ class UserController extends Controller
         // Filtre par rôle
         if ($request->filled('role')) {
             $role = $request->query('role');
-            $query->whereHas('roles', function ($q) use ($role) {
-                $q->where('name', $role);
-            });
+            $query->where('role', $role);
         }
 
         // Filtre par statut (actif / inactif)
@@ -53,8 +51,8 @@ class UserController extends Controller
         // Statistiques globales
         $stats = [
             'total'      => User::count(),
-            'apprenants' => User::whereHas('roles', fn($q) => $q->where('name', 'apprenant'))->count(),
-            'tuteurs'    => User::whereHas('roles', fn($q) => $q->where('name', 'tuteur'))->count(),
+            'apprenants' => User::where('role', 'apprenant')->count(),
+            'tuteurs'    => User::where('role', 'tuteur')->count(),
             'inactifs'   => User::where('is_active', false)->count(),
         ];
 

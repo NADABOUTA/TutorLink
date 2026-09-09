@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Espace Admin (Phase 9)
-    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('can:admin')->prefix('admin')->name('admin.')->group(function () {
         // Modération
         Route::get('/moderation', [\App\Http\Controllers\Admin\ModerationController::class, 'index'])->name('moderation.index');
         Route::patch('/moderation/{demande}/approuver', [\App\Http\Controllers\Admin\ModerationController::class, 'approuver'])->name('moderation.approuver');

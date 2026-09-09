@@ -15,12 +15,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\EnsureUserIsActive::class,
         ]);
-
-        $middleware->alias([
-            'role' => \Laratrust\Middleware\Role::class,
-            'permission' => \Laratrust\Middleware\Permission::class,
-            'ability' => \Laratrust\Middleware\Ability::class,
-        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

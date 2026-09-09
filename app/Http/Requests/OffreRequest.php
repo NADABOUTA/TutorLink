@@ -11,7 +11,7 @@ class OffreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user() && ($this->user()->hasRole('tuteur') || $this->user()->hasRole('admin'));
+        return $this->user() && ($this->user()->isTuteur() || $this->user()->isAdmin());
     }
 
     /**

@@ -30,8 +30,39 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'role' => 'apprenant',
             'is_active' => true,
         ];
+    }
+
+    /**
+     * Set user as admin.
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'admin',
+        ]);
+    }
+
+    /**
+     * Set user as tuteur.
+     */
+    public function tuteur(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'tuteur',
+        ]);
+    }
+
+    /**
+     * Set user as apprenant.
+     */
+    public function apprenant(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'apprenant',
+        ]);
     }
 
     /**

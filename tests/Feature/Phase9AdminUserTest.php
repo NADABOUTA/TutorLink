@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -10,15 +9,6 @@ use Tests\TestCase;
 class Phase9AdminUserTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Role::firstOrCreate(['name' => 'apprenant'], ['display_name' => 'Apprenant']);
-        Role::firstOrCreate(['name' => 'tuteur'], ['display_name' => 'Tuteur']);
-        Role::firstOrCreate(['name' => 'admin'], ['display_name' => 'Admin']);
-    }
 
     public function test_non_admin_cannot_access_admin_users_index(): void
     {

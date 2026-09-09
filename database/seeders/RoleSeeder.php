@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -14,48 +13,23 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $adminRole = Role::firstOrCreate(
-            ['name' => 'admin'],
-            [
-                'display_name' => 'Administrateur',
-                'description' => 'Gestion de la plateforme, modération et suivi des utilisateurs',
-            ]
-        );
-
-        $tuteurRole = Role::firstOrCreate(
-            ['name' => 'tuteur'],
-            [
-                'display_name' => 'Tuteur',
-                'description' => 'Propose des cours particuliers et répond aux demandes des apprenants',
-            ]
-        );
-
-        $apprenantRole = Role::firstOrCreate(
-            ['name' => 'apprenant'],
-            [
-                'display_name' => 'Apprenant',
-                'description' => 'Recherche un accompagnement pédagogique et publie des demandes',
-            ]
-        );
-
         // Utilisateur administrateur par défaut
-        $adminUser = User::updateOrCreate(
+        User::updateOrCreate(
             ['email' => 'admin@tutorlink.com'],
             [
                 'name' => 'Admin TutorLink',
+                'role' => 'admin',
                 'password' => Hash::make('password'),
                 'telephone' => '0600000000',
             ]
         );
-        if (!$adminUser->hasRole('admin')) {
-            $adminUser->addRole($adminRole);
-        }
 
         // Utilisateur tuteur par défaut
-        $tuteurUser = User::updateOrCreate(
+        User::updateOrCreate(
             ['email' => 'tuteur@test.com'],
             [
                 'name' => 'NADA',
+                'role' => 'tuteur',
                 'password' => Hash::make('password'),
                 'telephone' => '0611223344',
                 'bio' => 'Professeur passionné et expérimenté en Mathématiques et Physique.',
@@ -63,21 +37,16 @@ class RoleSeeder extends Seeder
                 'tarif_horaire' => 150,
             ]
         );
-        if (!$tuteurUser->hasRole('tuteur')) {
-            $tuteurUser->addRole($tuteurRole);
-        }
 
         // Utilisateur apprenant par défaut
-        $apprenantUser = User::updateOrCreate(
+        User::updateOrCreate(
             ['email' => 'apprenant@test.com'],
             [
                 'name' => 'TEST',
+                'role' => 'apprenant',
                 'password' => Hash::make('password'),
                 'telephone' => '0655443322',
             ]
         );
-        if (!$apprenantUser->hasRole('apprenant')) {
-            $apprenantUser->addRole($apprenantRole);
-        }
     }
 }

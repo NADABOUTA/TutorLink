@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Commentaire;
 use App\Models\Demande;
 use App\Models\Offre;
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -13,15 +12,6 @@ use Tests\TestCase;
 class DemandeWorkflowAndCommentairesTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Role::firstOrCreate(['name' => 'apprenant'], ['display_name' => 'Apprenant']);
-        Role::firstOrCreate(['name' => 'tuteur'], ['display_name' => 'Tuteur']);
-        Role::firstOrCreate(['name' => 'admin'], ['display_name' => 'Admin']);
-    }
 
     public function test_demande_creation_starts_as_en_attente_moderation(): void
     {

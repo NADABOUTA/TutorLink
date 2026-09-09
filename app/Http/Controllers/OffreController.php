@@ -90,10 +90,8 @@ class OffreController extends Controller
     {
         $user = $request->user();
 
-        // Vérifier que c'est bien l'apprenant créateur de la demande
-        if ($offre->demande->apprenant_id !== $user->id && !$user->hasRole('admin')) {
-            abort(403, "Seul l'auteur de la demande peut accepter une offre.");
-        }
+        // Vérifier que c'est bien l'apprenant créateur de la demande via la Policy native
+        \Illuminate\Support\Facades\Gate::authorize('accepter', $offre);
 
         // Vérifier que l'offre est toujours en attente
         if ($offre->statut !== 'en_attente') {

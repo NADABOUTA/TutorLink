@@ -2,19 +2,16 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laratrust\Contracts\LaratrustUser;
-use Laratrust\Traits\HasRolesAndPermissions;
 
-class User extends Authenticatable implements LaratrustUser
+class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRolesAndPermissions;
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -24,6 +21,7 @@ class User extends Authenticatable implements LaratrustUser
     protected $fillable = [
         'name',
         'email',
+        'role',
         'password',
         'telephone',
         'matiere',
@@ -38,6 +36,7 @@ class User extends Authenticatable implements LaratrustUser
      * @var array<string, mixed>
      */
     protected $attributes = [
+        'role' => 'apprenant',
         'is_active' => true,
     ];
 
@@ -110,5 +109,53 @@ class User extends Authenticatable implements LaratrustUser
 
         $avg = $this->avisRecus()->avg('note');
         return $avg !== null ? round((float) $avg, 1) : null;
+    }
+
+    /**
+     * Vérifie si l'utilisateur possède un rôle particulier.
+     */
+    public function hasRole(string|array $roles): bool
+    {
+        if (is_array($roles)) {
+            return in_array($this->role, $roles, true);
+        }
+
+        return $this->role === $roles;
+    }
+
+    /**
+     * Vérifie si l'utilisateur est un administrateur.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Vérifie si l'utilisateur est un tuteur.
+     */
+    public function isTuteur(): bool
+    {
+        return $this->role === 'tuteur';
+    }
+
+    /**
+     * Vérifie si l'utilisateur est un apprenant.
+     */
+    public function isApprenant(): bool
+    {
+        return $this->role === 'apprenant';
+    }
+
+    /**
+     * Assigne un rôle à l'utilisateur (rétrocompatibilité fluide).
+     */
+    public function addRole(mixed $role): self
+    {
+        $roleName = is_object($role) && isset($role->name) ? $role->name : (string) $role;
+        $this->role = $roleName;
+        $this->save();
+
+        return $this;
     }
 }

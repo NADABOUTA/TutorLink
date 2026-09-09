@@ -17,10 +17,8 @@ class CommentaireController extends Controller
     {
         $user = Auth::user();
 
-        // Seul l'apprenant, un tuteur ou un admin peut participer à la discussion
-        if (!$user->hasRole(['apprenant', 'tuteur', 'admin'])) {
-            abort(403, "Action non autorisée.");
-        }
+        // Vérification par CommentairePolicy
+        \Illuminate\Support\Facades\Gate::authorize('create', [\App\Models\Commentaire::class, $demande]);
 
         $validated = $request->validate([
             'contenu'  => ['required', 'string', 'min:2', 'max:1000'],

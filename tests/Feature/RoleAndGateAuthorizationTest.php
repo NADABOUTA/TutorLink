@@ -3,12 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\Demande;
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class LaratrustRoleAuthorizationTest extends TestCase
+class RoleAndGateAuthorizationTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -21,25 +20,14 @@ class LaratrustRoleAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        Role::firstOrCreate(['name' => 'admin'], ['display_name' => 'Admin']);
-        Role::firstOrCreate(['name' => 'tuteur'], ['display_name' => 'Tuteur']);
-        Role::firstOrCreate(['name' => 'apprenant'], ['display_name' => 'Apprenant']);
-
-        $this->apprenant = User::factory()->create(['name' => 'Apprenant 1']);
-        $this->apprenant->addRole('apprenant');
-
-        $this->autreApprenant = User::factory()->create(['name' => 'Apprenant 2']);
-        $this->autreApprenant->addRole('apprenant');
-
-        $this->tuteur = User::factory()->create(['name' => 'Tuteur']);
-        $this->tuteur->addRole('tuteur');
-
-        $this->admin = User::factory()->create(['name' => 'Admin']);
-        $this->admin->addRole('admin');
+        $this->apprenant = User::factory()->apprenant()->create(['name' => 'Apprenant 1']);
+        $this->autreApprenant = User::factory()->apprenant()->create(['name' => 'Apprenant 2']);
+        $this->tuteur = User::factory()->tuteur()->create(['name' => 'Tuteur']);
+        $this->admin = User::factory()->admin()->create(['name' => 'Admin']);
     }
 
     /**
-     * Un tuteur ne peut pas créer de demande (réservé aux apprenants).
+     * Un tuteur ne peut pas créer de demande (réservé aux apprenants via Policy).
      */
     public function test_tuteur_cannot_create_demande(): void
     {
@@ -123,7 +111,7 @@ class LaratrustRoleAuthorizationTest extends TestCase
     }
 
     /**
-     * Seul l'administrateur peut accéder à l'espace d'administration.
+     * Seul l'administrateur peut accéder à l'espace d'administration via la Gate admin.
      */
     public function test_only_admin_can_access_admin_panel(): void
     {

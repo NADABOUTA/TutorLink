@@ -26,12 +26,12 @@ class DemandePolicy
         }
 
         // L'administrateur a accès complet
-        if ($user->hasRole('admin')) {
+        if ($user->isAdmin()) {
             return true;
         }
 
         // Un tuteur peut consulter une demande si elle a été approuvée (ouverte) ou en cours
-        if ($user->hasRole('tuteur') && in_array($demande->statut, ['ouverte', 'en_cours'])) {
+        if ($user->isTuteur() && in_array($demande->statut, ['ouverte', 'en_cours'])) {
             return true;
         }
 
@@ -43,7 +43,7 @@ class DemandePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('apprenant') || $user->hasRole('admin');
+        return $user->isApprenant() || $user->isAdmin();
     }
 
     /**
@@ -51,6 +51,10 @@ class DemandePolicy
      */
     public function update(User $user, Demande $demande): bool
     {
+        if ($user->isAdmin()) {
+            return true;
+        }
+
         // Seul l'auteur peut modifier sa demande, tant qu'elle n'est pas déjà engagée ou terminée
         return $user->id === $demande->apprenant_id && in_array($demande->statut, ['en_attente_moderation', 'ouverte', 'refusee']);
     }
@@ -60,10 +64,22 @@ class DemandePolicy
      */
     public function delete(User $user, Demande $demande): bool
     {
-        if ($user->hasRole('admin')) {
+        if ($user->isAdmin()) {
             return true;
         }
 
         return $user->id === $demande->apprenant_id && in_array($demande->statut, ['en_attente_moderation', 'ouverte', 'refusee']);
+    }
+
+    /**
+     * Determine whether the user can terminate the demande.
+     */
+    public function terminer(User $user, Demande $demande): bool
+    {
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        return $user->id === $demande->apprenant_id && $demande->statut === 'en_cours';
     }
 }

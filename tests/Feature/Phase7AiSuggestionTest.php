@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
@@ -12,15 +11,6 @@ use Tests\TestCase;
 class Phase7AiSuggestionTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Role::firstOrCreate(['name' => 'apprenant'], ['display_name' => 'Apprenant']);
-        Role::firstOrCreate(['name' => 'tuteur'], ['display_name' => 'Tuteur']);
-        Role::firstOrCreate(['name' => 'admin'], ['display_name' => 'Admin']);
-    }
 
     public function test_guest_cannot_access_ai_suggestion(): void
     {

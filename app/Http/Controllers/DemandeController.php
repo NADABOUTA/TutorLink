@@ -20,7 +20,7 @@ class DemandeController extends Controller
         $query = Demande::query();
 
         // Si l'utilisateur est apprenant, il consulte ses propres demandes
-        if ($user->hasRole('apprenant') && !$user->hasRole('admin')) {
+        if ($user->isApprenant() && !$user->isAdmin()) {
             $query->where('apprenant_id', $user->id)
                   ->with(['apprenant'])
                   ->withCount('offres')
@@ -44,7 +44,7 @@ class DemandeController extends Controller
         }
 
         // Filtre par statut (pour les apprenants)
-        if ($request->filled('statut') && $user->hasRole('apprenant')) {
+        if ($request->filled('statut') && $user->isApprenant()) {
             $st = $request->query('statut');
             if ($st === 'en_moderation' || $st === 'en_attente_moderation') {
                 $query->whereIn('statut', ['en_attente_moderation', 'en_moderation']);
@@ -190,11 +190,7 @@ class DemandeController extends Controller
      */
     public function terminer(Demande $demande): RedirectResponse
     {
-        $user = request()->user();
-
-        if ($demande->apprenant_id !== $user->id && !$user->hasRole('admin')) {
-            abort(403, "Seul l'auteur de la demande peut la clôturer.");
-        }
+        Gate::authorize('terminer', $demande);
 
         if ($demande->statut !== 'en_cours') {
             return redirect()->back()->with('error', 'Seule une demande en cours peut être marquée comme terminée.');
