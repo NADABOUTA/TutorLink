@@ -31,15 +31,13 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 RUN npm install && npm run build
 
-# Configurer les permissions pour storage et bootstrap/cache
+# Permissions pour storage, bootstrap et le script d'entrée
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+    && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod +x /var/www/html/docker-entrypoint.sh
 
-# Créer le fichier SQLite par défaut au cas où
-RUN mkdir -p database && touch database/database.sqlite && chmod 777 database/database.sqlite
-
-# Copier le script de démarrage
 EXPOSE 8000
 
-CMD sh -c "php artisan config:clear && php artisan migrate --force && php artisan db:seed --class=RoleSeeder --force && php artisan serve --host=0.0.0.0 --port=\${PORT:-8000}"
+ENTRYPOINT ["/bin/sh", "/var/www/html/docker-entrypoint.sh"]
+
 
