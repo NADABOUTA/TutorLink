@@ -6,6 +6,10 @@ use App\Events\OffreAcceptee;
 use App\Http\Requests\OffreRequest;
 use App\Models\Demande;
 use App\Models\Offre;
+use App\Models\User;
+use App\Notifications\NouvelleOffreNotification;
+use App\Notifications\OffreAccepteeNotification;
+use App\Notifications\OffreAccepteePourAdminNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -77,7 +81,7 @@ class OffreController extends Controller
         ]);
 
         // Notifier l'apprenant de la nouvelle offre
-        $demande->apprenant->notify(new \App\Notifications\NouvelleOffreNotification($offre));
+        $demande->apprenant->notify(new NouvelleOffreNotification($offre));
 
         return redirect()->route('demandes.show', $demande)
             ->with('success', 'Votre proposition d\'offre a été transmise à l\'apprenant avec succès !');
@@ -91,7 +95,7 @@ class OffreController extends Controller
         $user = $request->user();
 
         // Vérifier que c'est bien l'apprenant créateur de la demande via la Policy native
-        \Illuminate\Support\Facades\Gate::authorize('accepter', $offre);
+        Gate::authorize('accepter', $offre);
 
         // Vérifier que l'offre est toujours en attente
         if ($offre->statut !== 'en_attente') {
@@ -118,7 +122,13 @@ class OffreController extends Controller
         });
 
         // 4. Notifier le tuteur dont l'offre a été retenue
-        $offre->tuteur->notify(new \App\Notifications\OffreAccepteeNotification($offre));
+        $offre->tuteur->notify(new OffreAccepteeNotification($offre));
+
+        // 4.bis Notifier les administrateurs de la mise en relation acceptée
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new OffreAccepteePourAdminNotification($offre));
+        }
 
         // 5. Déclencher l'événement OffreAcceptee
         event(new OffreAcceptee($offre));

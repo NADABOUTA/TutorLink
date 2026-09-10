@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DemandeRequest;
 use App\Models\Demande;
+use App\Models\User;
+use App\Notifications\NouvelleDemandePourAdminNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -20,22 +22,22 @@ class DemandeController extends Controller
         $query = Demande::query();
 
         // Si l'utilisateur est apprenant, il consulte ses propres demandes
-        if ($user->isApprenant() && !$user->isAdmin()) {
+        if ($user->isApprenant() && ! $user->isAdmin()) {
             $query->where('apprenant_id', $user->id)
-                  ->with(['apprenant'])
-                  ->withCount('offres')
-                  ->latest();
+                ->with(['apprenant'])
+                ->withCount('offres')
+                ->latest();
         } else {
             // Si c'est un tuteur, il consulte les demandes ouvertes à la candidature
             $query->where('statut', 'ouverte')
-                  ->with(['apprenant'])
-                  ->withCount('offres')
-                  ->latest();
+                ->with(['apprenant'])
+                ->withCount('offres')
+                ->latest();
         }
 
         // Filtre par matière (recherche insensible)
         if ($request->filled('matiere')) {
-            $query->where('matiere', 'like', '%' . $request->query('matiere') . '%');
+            $query->where('matiere', 'like', '%'.$request->query('matiere').'%');
         }
 
         // Filtre par niveau
@@ -63,7 +65,7 @@ class DemandeController extends Controller
             'Baccalauréat',
             'Supérieur / Université',
             'Formation Professionnelle',
-            'Autre'
+            'Autre',
         ];
 
         return view('demandes.index', compact('demandes', 'niveauxDisponibles'));
@@ -83,7 +85,7 @@ class DemandeController extends Controller
             'Baccalauréat',
             'Supérieur / Université',
             'Formation Professionnelle',
-            'Autre'
+            'Autre',
         ];
 
         return view('demandes.create', compact('niveaux'));
@@ -103,6 +105,12 @@ class DemandeController extends Controller
             'budget' => $request->validated('budget'),
             'statut' => 'en_attente_moderation',
         ]);
+
+        // Notifier tous les administrateurs qu'une nouvelle demande est à modérer
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new NouvelleDemandePourAdminNotification($demande));
+        }
 
         return redirect()->route('demandes.index')
             ->with('success', 'Votre demande a été publiée avec succès ! Elle sera examinée par un modérateur avant d\'être visible aux tuteurs.');
@@ -140,7 +148,7 @@ class DemandeController extends Controller
             'Baccalauréat',
             'Supérieur / Université',
             'Formation Professionnelle',
-            'Autre'
+            'Autre',
         ];
 
         return view('demandes.edit', compact('demande', 'niveaux'));
