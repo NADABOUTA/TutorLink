@@ -8,6 +8,7 @@ RUN apk update && apk add --no-cache \
     libpng-dev \
     oniguruma-dev \
     libxml2-dev \
+    sqlite-dev \
     zip \
     unzip \
     nginx \
@@ -15,7 +16,7 @@ RUN apk update && apk add --no-cache \
     npm \
     mysql-client
 
-RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo pdo_mysql pdo_sqlite mbstring exif pcntl bcmath gd
 
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -34,7 +35,11 @@ RUN npm install && npm run build
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Créer le fichier SQLite par défaut au cas où
+RUN mkdir -p database && touch database/database.sqlite && chmod 777 database/database.sqlite
+
 # Copier le script de démarrage
 EXPOSE 8000
 
-CMD php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan serve --host=0.0.0.0 --port=8000
+CMD sh -c "php artisan config:clear && php artisan migrate --force && php artisan db:seed --class=RoleSeeder --force && php artisan serve --host=0.0.0.0 --port=\${PORT:-8000}"
+
