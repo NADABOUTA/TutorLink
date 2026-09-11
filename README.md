@@ -15,7 +15,7 @@
 
 ---
 
-## 📖 Sommaire
+## Sommaire
 
 1. [Présentation du Projet](#-présentation-du-projet)
 2. [Fonctionnalités Clés](#-fonctionnalités-clés)
@@ -30,7 +30,7 @@
 
 ---
 
-## 🌟 Présentation du Projet
+##  Présentation du Projet
 
 **TutorLink** est une application web moderne conçue pour révolutionner la mise en relation entre **élèves/étudiants** et **professeurs particuliers qualifiés** au Maroc.
 
@@ -43,21 +43,21 @@ La plateforme résout le manque de transparence et d'intermédiation sécurisée
 
 ---
 
-## 🚀 Fonctionnalités Clés
+##  Fonctionnalités Clés
 
-### 👨‍🎓 Espace Apprenant (Élève / Parent)
+###  Espace Apprenant (Élève / Parent)
 - **Publication de demandes** : Matière, niveau (Collège, Lycée, Supérieur...), description du besoin et budget en MAD.
 - **Gestion des offres reçues** : Comparaison des profils de tuteurs, de leurs tarifs et messages de motivation.
 - **Acceptation d'une offre** : Déblocage immédiat du lien direct WhatsApp et du numéro de téléphone du tuteur.
 - **Évaluation post-cours** : Dépôt d'une note (1 à 5 étoiles) et d'un retour d'expérience constructif.
 
-### 👨‍🏫 Espace Tuteur (Enseignant)
+###  Espace Tuteur (Enseignant)
 - **Consultation des demandes ouvertes** : Moteur de recherche avec filtres par matière, niveau et budget.
 - **Soumission de propositions** : Proposition d'un tarif horaire et message personnalisé.
 - **Profil académique valorisant** : Biographie détaillée, matières enseignées, tarif horaire indicatif et moyenne des avis.
 - **Alertes en temps réel** : Notification dès qu'une offre est retenue par un apprenant.
 
-### 🛡️ Espace Administrateur
+###  Espace Administrateur
 - **Tableau de bord statistique (KPIs)** : Nombre d'utilisateurs, demandes en cours, taux de concrétisation.
 - **Modération des annonces** : Validation ou refus (avec motif obligatoire) des demandes soumises.
 - **Gestion des utilisateurs** : Activation / désactivation de comptes et consultation des profils.
@@ -65,7 +65,7 @@ La plateforme résout le manque de transparence et d'intermédiation sécurisée
 
 ---
 
-## 📐 Architecture & Conception (MCD / MLD)
+##  Architecture & Conception (MCD / MLD)
 
 La base de données repose sur une modélisation formelle rigoureuse respectant la **méthode Merise** et le **modèle relationnel normalisé (3NF)**.
 
@@ -90,7 +90,7 @@ NOTIFICATIONS (id, type, notifiable_type, #notifiable_id, data, read_at, created
 
 ---
 
-## 💻 Prérequis Système
+##  Prérequis Système
 
 Avant de commencer l'installation, assurez-vous de disposer des éléments suivants :
 - **PHP** : version **8.3** ou supérieure (avec extensions : `pdo_mysql`, `mbstring`, `openssl`, `curl`, `tokenizer`, `xml`, `bcmath`).
@@ -101,7 +101,7 @@ Avant de commencer l'installation, assurez-vous de disposer des éléments suiva
 
 ---
 
-## 🛠️ Guide d'Installation Locale
+##  Guide d'Installation Locale
 
 Suivez ces étapes pour exécuter le projet sur votre machine locale :
 
@@ -155,7 +155,7 @@ L'application est désormais accessible sur : **`http://127.0.0.1:8000`**
 
 ---
 
-## 🔑 Comptes de Démonstration
+##  Comptes de Démonstration
 
 Le seeder (`RoleSeeder.php`) initialise automatiquement 3 comptes avec des rôles distincts pour tester l'ensemble des cas d'usage :
 
@@ -167,7 +167,7 @@ Le seeder (`RoleSeeder.php`) initialise automatiquement 3 comptes avec des rôle
 
 ---
 
-## 🌐 Guide de Déploiement en Ligne
+##  Guide de Déploiement en Ligne
 
 Voici les 3 méthodes recommandées pour mettre **TutorLink** en ligne :
 

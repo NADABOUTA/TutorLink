@@ -1,435 +1,483 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TutorLink — Plateforme d'Excellence & Soutien Académique au Maroc</title>
-    <meta name="description" content="TutorLink connecte élèves, étudiants et professeurs particuliers d'exception partout au Maroc. Modèle direct, transparent et sans intermédiaire.">
-
-    <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+    <title>TutorLink — Plateforme d'Apprentissage & Mentorat d'Excellence</title>
+    <meta name="description" content="TutorLink connecte apprenants, tuteurs experts et coordinateurs sur un écosystème unifié et sécurisé.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="antialiased bg-[#fafaf9] text-[#121212] font-sans min-h-screen flex flex-col selection:bg-[#121212] selection:text-white">
+<body class="antialiased bg-[#090D16] text-white font-sans min-h-screen selection:bg-amber-500/20 selection:text-amber-300">
 
-    {{-- TOP NAVBAR ÉDITORIALE --}}
-    <header class="sticky top-0 z-50 bg-[#fafaf9]/90 backdrop-blur-md border-b border-[#e7e7e4] transition-all">
-        <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-
-            {{-- Brand Monogram --}}
+    {{-- NAVBAR (Screenshot 1) --}}
+    <header class="fixed top-0 left-0 right-0 z-50 bg-[#090D16]/90 backdrop-blur-xl border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Brand -->
             <a href="{{ url('/') }}" class="flex items-center gap-3 no-underline group">
-                <div class="w-9 h-9 rounded-lg flex items-center justify-center text-white font-black text-xs tracking-widest uppercase bg-[#121212] shadow-xs group-hover:scale-105 transition-transform relative">
-                    TL
-                    <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-500"></span>
+                <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-[#0B101B] border border-amber-500/40 shadow-glow-sm">
+                    <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/>
+                    </svg>
                 </div>
-                <div class="flex flex-col">
-                    <span class="text-lg font-black tracking-tight text-[#121212] font-display">Tutor<span class="text-neutral-500 font-medium">Link</span></span>
-                    <span class="text-[9px] font-bold tracking-widest text-neutral-400 uppercase -mt-0.5">Maroc · Studio</span>
-                </div>
+                <span class="text-xl font-black tracking-tight text-white font-display">Tutor<span class="text-amber-500">Link</span></span>
             </a>
 
-            {{-- Center Navigation Links --}}
-            <nav class="hidden md:flex items-center gap-8 text-xs font-semibold uppercase tracking-wider text-neutral-500">
-                <a href="{{ route('demandes.index') }}" class="hover:text-[#121212] transition-colors no-underline">Explorer</a>
-                <a href="#matieres" class="hover:text-[#121212] transition-colors no-underline">Disciplines</a>
-                <a href="#comment-ca-marche" class="hover:text-[#121212] transition-colors no-underline">Méthode</a>
-                <a href="#excellence" class="hover:text-[#121212] transition-colors no-underline">Pédagogie</a>
-                <a href="#garanties" class="hover:text-[#121212] transition-colors no-underline">Garanties</a>
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold">
+                <a href="#accueil" class="text-amber-400 no-underline transition hover:text-amber-300">Accueil</a>
+                <a href="#comment-ca-marche" class="text-slate-300 hover:text-white no-underline transition">Comment ça marche</a>
+                <a href="#temoignages" class="text-slate-300 hover:text-white no-underline transition">Témoignages</a>
             </nav>
 
-            {{-- Right CTA Actions --}}
-            <div class="flex items-center gap-3">
+            <!-- Actions -->
+            <div class="flex items-center gap-4">
                 @auth
-                    <a href="{{ route('dashboard') }}" class="btn-primary flex items-center gap-2 no-underline">
-                        <span>Mon Espace</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    <a href="{{ route('dashboard') }}" class="btn-primary px-6 py-2.5 rounded-full text-xs font-bold no-underline flex items-center gap-2">
+                        <span>Tableau de bord</span>
+                        <span>&rarr;</span>
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="btn-secondary no-underline">
-                        Connexion
+                    <a href="{{ route('login') }}" class="hidden sm:flex items-center gap-2 text-sm font-semibold text-slate-300 hover:text-white no-underline transition">
+                        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                        </svg>
+                        <span>Connexion</span>
                     </a>
-                    <a href="{{ route('register') }}" class="btn-primary no-underline">
-                        S'inscrire
+                    <a href="{{ route('register') }}" class="btn-primary px-6 py-2.5 rounded-full text-xs font-bold no-underline flex items-center gap-2">
+                        <span>S'inscrire</span>
+                        <span>&rarr;</span>
                     </a>
                 @endauth
             </div>
         </div>
     </header>
 
-    {{-- HERO SECTION ÉPURÉE SWISS --}}
-    <section class="relative pt-16 pb-20 px-6 lg:pt-20 lg:pb-24 overflow-hidden border-b border-[#e7e7e4]">
-        
-        <div class="max-w-6xl mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
-                
-                {{-- Left Column: Typography & Search --}}
-                <div class="lg:col-span-7 space-y-7 text-left">
-                    
-                    {{-- Minimalist Badge --}}
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide bg-neutral-100 text-neutral-800 border border-neutral-200">
-                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                        <span>Plateforme académique d'excellence & mentorat</span>
-                    </div>
+    {{-- HERO SECTION (Screenshot 1) --}}
+    <section id="accueil" class="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
+        <!-- Radial atmospheric glows -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-gradient-to-b from-amber-500/10 via-orange-500/5 to-transparent rounded-full blur-3xl pointer-events-none"></div>
 
-                    {{-- Architectural Title --}}
-                    <h1 class="text-4xl sm:text-5xl xl:text-6xl font-black text-[#121212] tracking-tight leading-[1.08] font-display">
-                        L'accompagnement scolaire, <br>
-                        <span class="text-neutral-500 font-normal italic">redéfini avec exigence.</span>
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+                
+                <!-- Left Column -->
+                <div class="lg:col-span-6 space-y-6 text-left">
+                    <span class="inline-block text-xs font-bold uppercase tracking-widest text-amber-500">
+                        Découvrir la plateforme TutorLink
+                    </span>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight font-display leading-[1.1]">
+                        Introduction à<br>TutorLink
                     </h1>
-
-                    {{-- Clean Subtitle --}}
-                    <p class="text-base text-neutral-600 font-normal leading-relaxed max-w-lg">
-                        Mise en relation directe avec les professeurs particuliers les plus qualifiés du Royaume. Du collège aux classes préparatoires (CPGE), un suivi rigoureux, sans commission.
+                    <p class="text-slate-400 text-sm sm:text-base leading-relaxed max-w-lg">
+                        TutorLink est conçu pour faciliter le mentorat et l'apprentissage personnalisé. Connectez apprenants, tuteurs experts et coordinateurs sur un écosystème unifié et sécurisé.
                     </p>
-
-                    {{-- LIVE SEARCH BAR MINIMALISTE --}}
-                    <div class="pt-2 max-w-xl">
-                        <form action="{{ route('demandes.index') }}" method="GET" class="p-2 bg-white rounded-xl border border-[#e7e7e4] shadow-xs grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
-                            
-                            {{-- Input Matière --}}
-                            <div class="sm:col-span-6 px-3 py-1">
-                                <label class="block text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-0.5">Matière</label>
-                                <input type="text" name="matiere" placeholder="Maths, Physique, SVT..." class="w-full text-sm font-semibold text-neutral-900 placeholder-neutral-400 border-none p-0 focus:ring-0 focus:outline-none">
-                            </div>
-
-                            <div class="hidden sm:block sm:col-span-1 h-6 border-r border-[#e7e7e4]"></div>
-
-                            {{-- Select Niveau --}}
-                            <div class="sm:col-span-5 px-3 py-1">
-                                <label class="block text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-0.5">Niveau</label>
-                                <select name="niveau" class="w-full text-sm font-semibold text-neutral-900 border-none p-0 focus:ring-0 focus:outline-none bg-transparent cursor-pointer">
-                                    <option value="">Tous les niveaux</option>
-                                    <option value="Primaire">Primaire</option>
-                                    <option value="Collège">Collège</option>
-                                    <option value="Lycée">Lycée (Bac)</option>
-                                    <option value="CPGE">CPGE / Prépa</option>
-                                    <option value="Supérieur">Supérieur / Univ</option>
-                                </select>
-                            </div>
-
-                            {{-- Submit Button --}}
-                            <div class="sm:col-span-12 pt-2 border-t border-neutral-100 flex items-center justify-between gap-3">
-                                <span class="text-[11px] text-neutral-400 hidden sm:inline">Contact direct WhatsApp après acceptation</span>
-                                <button type="submit" class="btn-primary w-full sm:w-auto ml-auto">
-                                    Rechercher
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    {{-- Minimalist Metrics Strip --}}
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 max-w-xl">
-                        <div class="p-3 rounded-lg bg-white border border-[#e7e7e4]">
-                            <p class="text-xl font-bold text-neutral-900 font-display">98%</p>
-                            <p class="text-[10px] font-medium text-neutral-500 uppercase tracking-wider mt-0.5">Satisfaction</p>
-                        </div>
-                        <div class="p-3 rounded-lg bg-white border border-[#e7e7e4]">
-                            <p class="text-xl font-bold text-neutral-900 font-display">100%</p>
-                            <p class="text-[10px] font-medium text-neutral-500 uppercase tracking-wider mt-0.5">Modérés</p>
-                        </div>
-                        <div class="p-3 rounded-lg bg-white border border-[#e7e7e4]">
-                            <p class="text-xl font-bold text-amber-600 font-display">&lt; 24h</p>
-                            <p class="text-[10px] font-medium text-neutral-500 uppercase tracking-wider mt-0.5">Délai moyen</p>
-                        </div>
-                        <div class="p-3 rounded-lg bg-white border border-[#e7e7e4]">
-                            <p class="text-xl font-bold text-neutral-900 font-display">0 DH</p>
-                            <p class="text-[10px] font-medium text-neutral-500 uppercase tracking-wider mt-0.5">Commission</p>
-                        </div>
-                    </div>
-
-                </div>
-
-                {{-- Right Column: Image Hero Visuelle Monochrome Haute Définition --}}
-                <div class="lg:col-span-5 relative">
-                    <div class="relative mx-auto max-w-md lg:max-w-none">
-                        
-                        {{-- Image Container avec bordure fine architecturale --}}
-                        <div class="relative rounded-2xl overflow-hidden border border-[#e7e7e4] bg-white p-2 shadow-xs">
-                            <img src="{{ asset('images/hero-tutoring.jpg') }}" 
-                                 alt="Séance d'accompagnement académique TutorLink" 
-                                 class="w-full h-[400px] object-cover object-center rounded-xl">
-                            
-                            {{-- Minimalist bottom tag --}}
-                            <div class="absolute bottom-6 left-6 right-6 p-3 bg-white/95 backdrop-blur-md rounded-lg border border-[#e7e7e4] text-xs">
-                                <p class="font-bold text-neutral-900 font-display">Séance Individuelle & Suivi Régulier</p>
-                                <p class="text-neutral-500 text-[11px] mt-0.5">À domicile ou en visioconférence partout au Maroc</p>
-                            </div>
-                        </div>
-
-                        {{-- Micro Floating Badge --}}
-                        <div class="absolute -top-3 -right-3 bg-white rounded-lg p-2.5 shadow-sm border border-[#e7e7e4] flex items-center gap-2">
-                            <span class="text-amber-500 text-sm">★</span>
-                            <span class="text-xs font-bold text-neutral-900">4.9 / 5.0</span>
-                            <span class="text-[10px] text-neutral-400">· 1.2k avis</span>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    {{-- POPULAR SUBJECTS SECTION --}}
-    <section id="matieres" class="py-20 px-6 bg-white border-b border-[#e7e7e4]">
-        <div class="max-w-6xl mx-auto space-y-12">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Disciplines</p>
-                    <h2 class="text-3xl font-black text-neutral-900 tracking-tight font-display mt-1">Matières & Concours d'Excellence</h2>
-                </div>
-                <p class="text-xs text-neutral-500 max-w-md">Trouvez rapidement un enseignant hautement qualifié pour un suivi hebdomadaire ou une révision intensive.</p>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                @php
-                    $disciplines = [
-                        ['Mathématiques', 'Algèbre, Analyse, Géométrie', 'M'],
-                        ['Physique - Chimie', 'Mécanique, Électricité, Ondes', 'PC'],
-                        ['SVT', 'Génétique, Géologie, Immunologie', 'SVT'],
-                        ['Français & Philosophie', 'Dissertation, Analyse d\'œuvres', 'FR'],
-                        ['Langues Vivantes', 'Anglais, Espagnol, Expression', 'EN'],
-                        ['CPGE & Concours', 'MPSI, PCSI, CNC, Médecine', 'CPGE'],
-                        ['Informatique', 'Python, Algorithmique, SQL', 'DEV'],
-                        ['Économie & Gestion', 'Micro, Macro, Comptabilité', 'ÉCO'],
-                    ];
-                @endphp
-
-                @foreach($disciplines as [$nom, $desc, $badge])
-                    <a href="{{ route('demandes.index', ['matiere' => $nom]) }}" class="card card-hover p-5 flex flex-col justify-between no-underline group">
-                        <div>
-                            <div class="w-8 h-8 rounded-md font-bold text-xs flex items-center justify-center border border-[#e7e7e4] bg-[#fafaf9] text-neutral-800 mb-3">
-                                {{ $badge }}
-                            </div>
-                            <h3 class="text-sm font-bold text-neutral-900 group-hover:text-black transition-colors font-display">{{ $nom }}</h3>
-                            <p class="text-xs text-neutral-500 mt-1 leading-relaxed">{{ $desc }}</p>
-                        </div>
-                        <div class="pt-4 mt-4 border-t border-[#f5f5f4] flex items-center justify-between text-xs font-semibold text-neutral-700 group-hover:text-black">
-                            <span>Consulter</span>
-                            <span class="group-hover:translate-x-1 transition-transform">→</span>
-                        </div>
-                    </a>
-                @endforeach
-            </div>
-        </div>
-    </section>
-
-    {{-- HOW IT WORKS --}}
-    <section id="comment-ca-marche" class="py-20 px-6 bg-[#fafaf9] border-b border-[#e7e7e4]">
-        <div class="max-w-6xl mx-auto space-y-12">
-            <div>
-                <p class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Processus</p>
-                <h2 class="text-3xl font-black text-neutral-900 tracking-tight font-display mt-1">Le fonctionnement en 3 temps</h2>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                {{-- Step 1 --}}
-                <div class="card p-7">
-                    <p class="text-xs font-mono text-neutral-400 mb-4 font-bold">01 / DÉPÔT</p>
-                    <h3 class="text-lg font-bold text-neutral-900 mb-2 font-display">Publiez votre besoin</h3>
-                    <p class="text-xs text-neutral-600 leading-relaxed">
-                        Précisez la matière, le niveau académique (Collège, Lycée, Supérieur), votre ville et votre budget horaire estimé en dirhams (DH).
-                    </p>
-                </div>
-
-                {{-- Step 2 --}}
-                <div class="card p-7">
-                    <p class="text-xs font-mono text-neutral-400 mb-4 font-bold">02 / PROPOSITIONS</p>
-                    <h3 class="text-lg font-bold text-neutral-900 mb-2 font-display">Recevez les offres</h3>
-                    <p class="text-xs text-neutral-600 leading-relaxed">
-                        Des enseignants certifiés examinent votre demande et formulent leur offre personnalisée avec leur tarif horaire et leur pédagogie.
-                    </p>
-                </div>
-
-                {{-- Step 3 --}}
-                <div class="card p-7">
-                    <p class="text-xs font-mono text-neutral-400 mb-4 font-bold">03 / CONTACT</p>
-                    <h3 class="text-lg font-bold text-neutral-900 mb-2 font-display">Échangez directement</h3>
-                    <p class="text-xs text-neutral-600 leading-relaxed">
-                        Retenez la meilleure proposition pour débloquer immédiatement les coordonnées directes (WhatsApp & Téléphone) de l'enseignant.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- SECTION PÉDAGOGIE D'EXCELLENCE AVEC 2ÈME IMAGE --}}
-    <section id="excellence" class="py-20 px-6 bg-white border-b border-[#e7e7e4]">
-        <div class="max-w-6xl mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                
-                {{-- Image de gauche --}}
-                <div class="lg:col-span-6">
-                    <div class="rounded-2xl overflow-hidden border border-[#e7e7e4] bg-[#fafaf9] p-2">
-                        <img src="{{ asset('images/tutor-mentorship.jpg') }}" 
-                             alt="Excellence pédagogique et mentorat TutorLink" 
-                             class="w-full h-[380px] object-cover object-center rounded-xl">
-                    </div>
-                </div>
-
-                {{-- Contenu de droite --}}
-                <div class="lg:col-span-6 space-y-5 text-left">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Approche Pédagogique</p>
-                    <h2 class="text-3xl font-black text-neutral-900 tracking-tight leading-snug font-display">
-                        Une démarche sur-mesure tournée vers les résultats
-                    </h2>
-                    <p class="text-neutral-600 text-xs sm:text-sm leading-relaxed">
-                        Chaque élève progresse à son rythme. Les professeurs sur TutorLink instaurent un diagnostic initial rigoureux pour cibler les lacunes, développer la méthodologie d'examen et bâtir une solide autonomie de travail.
-                    </p>
-
-                    <div class="space-y-3 pt-2">
-                        <div class="flex items-start gap-3">
-                            <span class="w-1.5 h-1.5 rounded-full bg-neutral-900 mt-2 flex-shrink-0"></span>
-                            <div>
-                                <h4 class="text-xs font-bold text-neutral-900">Diagnostic initial individualisé</h4>
-                                <p class="text-[11px] text-neutral-500 mt-0.5">Identification des points de blocage dès la première séance.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <span class="w-1.5 h-1.5 rounded-full bg-neutral-900 mt-2 flex-shrink-0"></span>
-                            <div>
-                                <h4 class="text-xs font-bold text-neutral-900">Entraînement sur annales & concours</h4>
-                                <p class="text-[11px] text-neutral-500 mt-0.5">Préparation intensive au Baccalauréat et aux écoles supérieures.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <span class="w-1.5 h-1.5 rounded-full bg-neutral-900 mt-2 flex-shrink-0"></span>
-                            <div>
-                                <h4 class="text-xs font-bold text-neutral-900">Échanges directs sans filtre</h4>
-                                <p class="text-[11px] text-neutral-500 mt-0.5">Suivi continu et liberté d'organisation par WhatsApp.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-3">
-                        <a href="{{ route('demandes.index') }}" class="btn-primary no-underline">
-                            Consulter les annonces ouvertes
+                    <div class="pt-2 flex flex-wrap items-center gap-4">
+                        <a href="{{ route('register', ['role' => 'tuteur']) }}" class="btn-primary px-7 py-3.5 rounded-full text-sm font-bold shadow-glow-amber no-underline inline-flex items-center gap-2">
+                            <span>Créer une offre</span>
+                        </a>
+                        <a href="{{ route('demandes.index') }}" class="px-6 py-3.5 rounded-full text-sm font-semibold text-slate-300 hover:text-white bg-[#101726] border border-slate-800 hover:border-slate-700 transition no-underline inline-flex items-center gap-2">
+                            <span>Explorer les demandes</span>
+                            <span>&rarr;</span>
                         </a>
                     </div>
                 </div>
 
+                <!-- Right Column (Connected Architecture Diagram from Screenshot 1) -->
+                <div class="lg:col-span-6 relative flex items-center justify-center">
+                    <div class="relative w-full max-w-lg aspect-square flex items-center justify-center">
+                        
+                        <!-- SVG Connection Lines -->
+                        <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 500 500" fill="none">
+                            <!-- Dashed glow lines -->
+                            <line x1="250" y1="90" x2="140" y2="210" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="4 4" stroke-opacity="0.6"/>
+                            <line x1="250" y1="90" x2="360" y2="210" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="4 4" stroke-opacity="0.6"/>
+                            <line x1="140" y1="210" x2="250" y2="360" stroke="#F59E0B" stroke-width="1.5" stroke-opacity="0.5"/>
+                            <line x1="360" y1="210" x2="250" y2="360" stroke="#F59E0B" stroke-width="1.5" stroke-opacity="0.5"/>
+                            
+                            <!-- Glowing center connection circle -->
+                            <circle cx="250" cy="210" r="3" fill="#F59E0B"/>
+                        </svg>
+
+                        <!-- Top Node: Choix de Cours -->
+                        <div class="absolute top-8 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-2xl bg-[#101726] border border-amber-500/40 shadow-glow-sm flex items-center justify-center text-amber-400 mb-2">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                                </svg>
+                            </div>
+                            <span class="text-xs font-bold text-amber-400 tracking-wide">Choix de Cours</span>
+                        </div>
+
+                        <!-- Left Node: Apprenant -->
+                        <div class="absolute left-6 top-1/2 -translate-y-1/2 flex flex-col items-center">
+                            <div class="relative mb-2">
+                                <div class="absolute -inset-1 rounded-full bg-amber-500/30 blur-sm animate-pulse"></div>
+                                <div class="relative w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-slate-950 shadow-xl">
+                                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2a5 5 0 105 5 5 5 0 00-5-5zm0 12c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <span class="text-xs font-bold text-white tracking-wide">Apprenant</span>
+                        </div>
+
+                        <!-- Right Node: Administrateur -->
+                        <div class="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-center">
+                            <div class="relative mb-2">
+                                <div class="absolute -inset-1 rounded-full bg-sky-500/30 blur-sm"></div>
+                                <div class="relative w-16 h-16 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white shadow-xl">
+                                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2a5 5 0 105 5 5 5 0 00-5-5zm0 12c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <span class="text-xs font-bold text-white tracking-wide">Administrateur</span>
+                        </div>
+
+                        <!-- Bottom Node: Session de Tutorat -->
+                        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-2xl bg-[#101726] border border-amber-500/40 shadow-glow-sm flex items-center justify-center text-amber-400 mb-2">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </div>
+                            <span class="text-xs font-bold text-amber-400 tracking-wide">Session de Tutorat</span>
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
+
+            <!-- 3 Feature Cards Row (Screenshot 1) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 pt-8">
+                <!-- Card 1 -->
+                <div class="card p-6 rounded-2xl bg-[#101726] border border-slate-800 hover:border-amber-500/40 transition-all duration-200">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-white mb-1">1. Créer une Offre</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Publiez et configurez facilement vos matières, vos disponibilités et votre tarif horaire.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="card p-6 rounded-2xl bg-[#101726] border border-slate-800 hover:border-amber-500/40 transition-all duration-200">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-white mb-1">2. Soumettre une Demande</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Exprimez vos besoins spécifiques et recevez des propositions ciblées de mentors certifiés.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="card p-6 rounded-2xl bg-[#101726] border border-slate-800 hover:border-amber-500/40 transition-all duration-200">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-white mb-1">Session de Tutorat</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Bénéficiez d'un suivi interactif en direct avec tableau virtuel et feedback instantané.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
-    {{-- WHY CHOOSE TUTORLINK / TRUST PILLARS --}}
-    <section id="garanties" class="py-20 px-6 bg-[#fafaf9] border-b border-[#e7e7e4]">
-        <div class="max-w-6xl mx-auto space-y-10">
-            <div>
-                <p class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Engagements</p>
-                <h2 class="text-3xl font-black text-neutral-900 tracking-tight font-display mt-1">Nos piliers de confiance</h2>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                <div class="card p-7 space-y-3">
-                    <div class="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-xs font-bold text-neutral-800">
-                        01
-                    </div>
-                    <h3 class="text-base font-bold text-neutral-900 font-display">Modération Préalable</h3>
-                    <p class="text-xs text-neutral-600 leading-relaxed">
-                        Toutes les annonces et candidatures sont soigneusement vérifiées par notre équipe avant d'apparaître publiquement sur la plateforme.
-                    </p>
-                </div>
-
-                <div class="card p-7 space-y-3">
-                    <div class="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-xs font-bold text-neutral-800">
-                        02
-                    </div>
-                    <h3 class="text-base font-bold text-neutral-900 font-display">Avis 100% Authentifiés</h3>
-                    <p class="text-xs text-neutral-600 leading-relaxed">
-                        Seuls les élèves ayant validé et terminé un cours avec un professeur peuvent soumettre une évaluation notée sur 5 étoiles.
-                    </p>
-                </div>
-
-                <div class="card p-7 space-y-3">
-                    <div class="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-xs font-bold text-neutral-800">
-                        03
-                    </div>
-                    <h3 class="text-base font-bold text-neutral-900 font-display">Contact Direct & Transparent</h3>
-                    <p class="text-xs text-neutral-600 leading-relaxed">
-                        Zéro commission cachée. Dès l'offre acceptée, communiquez directement par WhatsApp ou téléphone pour fixer vos créneaux.
-                    </p>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    {{-- CALL TO ACTION BANNER ÉDITORIAL --}}
-    <section class="py-16 px-6 bg-[#121212] text-white">
-        <div class="max-w-4xl mx-auto text-center space-y-5">
-            <h2 class="text-3xl sm:text-4xl font-black tracking-tight font-display text-white">
-                Prêt à accélérer votre parcours académique ?
+    {{-- POURQUOI TUTORLINK ? (Screenshot 1) --}}
+    <section class="py-12 border-y border-slate-800/80 bg-[#0B101B]">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h2 class="text-2xl sm:text-3xl font-black text-white font-display mb-6">
+                Pourquoi TutorLink?
             </h2>
-            <p class="text-neutral-400 text-xs sm:text-sm max-w-lg mx-auto font-normal leading-relaxed">
-                Rejoignez des centaines d'élèves et de tuteurs passionnés partout au Maroc. Inscription rapide et 100% gratuite.
-            </p>
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-                @auth
-                    <a href="{{ route('demandes.create') }}" class="btn-primary !bg-white !text-neutral-900 hover:!bg-neutral-100 no-underline inline-block px-7 py-3">
-                        Publier une demande
-                    </a>
-                @else
-                    <a href="{{ route('register') }}" class="btn-primary !bg-white !text-neutral-900 hover:!bg-neutral-100 no-underline inline-block px-7 py-3">
-                        Créer mon compte
-                    </a>
-                    <a href="{{ route('demandes.index') }}" class="btn-secondary !bg-transparent !text-white !border-neutral-700 hover:!bg-neutral-800 no-underline inline-block px-7 py-3">
-                        Explorer les demandes
-                    </a>
-                @endauth
+            <div class="flex flex-wrap items-center justify-center gap-8 text-xs sm:text-sm font-bold text-slate-300">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 shadow-glow-sm"></span>
+                    <span>Premium & Professionnel</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 shadow-glow-sm"></span>
+                    <span>Simple & Intuitif</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 shadow-glow-sm"></span>
+                    <span>Tuteurs Certifiés</span>
+                </div>
             </div>
         </div>
     </section>
 
-    {{-- COMPREHENSIVE FOOTER ÉDITORIAL --}}
-    <footer class="mt-auto py-12 px-6 bg-white border-t border-[#e7e7e4] text-xs text-neutral-500">
-        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
-            <div class="space-y-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-7 h-7 rounded-md bg-[#121212] text-white font-black text-xs flex items-center justify-center">TL</div>
-                    <span class="font-extrabold text-neutral-900 text-sm font-display">TutorLink Maroc</span>
-                </div>
-                <p class="text-[11px] text-neutral-500 leading-relaxed">
-                    Plateforme académique dédiée à la mise en relation rigoureuse et bienveillante entre tuteurs qualifiés et apprenants.
+    {{-- COMMENT ÇA MARCHE ? (Screenshot 1) --}}
+    <section id="comment-ca-marche" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="inline-block px-4 py-1.5 rounded-full text-[11px] font-bold tracking-widest text-amber-500 uppercase bg-amber-500/10 border border-amber-500/20 mb-3">
+                    Parcours intuitif en 4 étapes
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-black text-white font-display tracking-tight">
+                    Comment ça marche ?
+                </h2>
+                <p class="text-slate-400 text-sm mt-3 leading-relaxed">
+                    Une méthodologie fluide conçue pour connecter rapidement chaque étudiant au mentor idéal et accélérer sa réussite.
                 </p>
             </div>
-            <div>
-                <p class="text-[10px] font-bold uppercase tracking-widest text-neutral-900 mb-3">Matières</p>
-                <ul class="space-y-2 text-[11px]">
-                    <li><a href="{{ route('demandes.index', ['matiere' => 'Mathématiques']) }}" class="hover:text-black transition-colors no-underline">Mathématiques</a></li>
-                    <li><a href="{{ route('demandes.index', ['matiere' => 'Physique - Chimie']) }}" class="hover:text-black transition-colors no-underline">Physique - Chimie</a></li>
-                    <li><a href="{{ route('demandes.index', ['matiere' => 'SVT']) }}" class="hover:text-black transition-colors no-underline">Sciences de la Vie et de la Terre</a></li>
-                    <li><a href="{{ route('demandes.index', ['matiere' => 'Anglais']) }}" class="hover:text-black transition-colors no-underline">Langues Vivantes</a></li>
-                </ul>
-            </div>
-            <div>
-                <p class="text-[10px] font-bold uppercase tracking-widest text-neutral-900 mb-3">Cursus</p>
-                <ul class="space-y-2 text-[11px]">
-                    <li><a href="{{ route('demandes.index', ['niveau' => 'Collège']) }}" class="hover:text-black transition-colors no-underline">Collège (1ère à 3ème AC)</a></li>
-                    <li><a href="{{ route('demandes.index', ['niveau' => 'Lycée']) }}" class="hover:text-black transition-colors no-underline">Lycée (Tronc Commun & Bac)</a></li>
-                    <li><a href="{{ route('demandes.index', ['niveau' => 'CPGE']) }}" class="hover:text-black transition-colors no-underline">Classes Préparatoires (CPGE)</a></li>
-                    <li><a href="{{ route('demandes.index', ['niveau' => 'Supérieur']) }}" class="hover:text-black transition-colors no-underline">Universités & Grandes Écoles</a></li>
-                </ul>
-            </div>
-            <div>
-                <p class="text-[10px] font-bold uppercase tracking-widest text-neutral-900 mb-3">Espace Membre</p>
-                <ul class="space-y-2 text-[11px]">
-                    <li><a href="{{ route('login') }}" class="hover:text-black transition-colors no-underline">Connexion</a></li>
-                    <li><a href="{{ route('register') }}" class="hover:text-black transition-colors no-underline">Inscription Apprenant</a></li>
-                    <li><a href="{{ route('register') }}" class="hover:text-black transition-colors no-underline">Devenir Tuteur</a></li>
-                    <li><a href="{{ route('demandes.index') }}" class="hover:text-black transition-colors no-underline">Toutes les annonces</a></li>
-                </ul>
-            </div>
-        </div>
 
-        <div class="max-w-6xl mx-auto pt-6 border-t border-[#f5f5f4] flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-neutral-400">
-            <p>&copy; {{ date('Y') }} TutorLink Maroc. Tous droits réservés.</p>
-            <p>Rabat · Casablanca · Marrakech · Fès · Tanger · En ligne</p>
+            <!-- 4 Cards Grid (Screenshot 1) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Step 01 -->
+                <div class="card p-6 rounded-2xl bg-[#101726] border border-slate-800 flex flex-col justify-between hover:border-amber-500/40 transition-all duration-200 group">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-2xl font-black text-amber-500 font-display">01</span>
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            </div>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">Inscription & Profil</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Créez votre compte en quelques clics. Précisez vos matières, objectifs d'apprentissage ou compétences d'expertise.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-800">
+                        <span class="text-[11px] font-semibold text-amber-400/90">Configuration en 2 min</span>
+                    </div>
+                </div>
+
+                <!-- Step 02 -->
+                <div class="card p-6 rounded-2xl bg-[#101726] border border-slate-800 flex flex-col justify-between hover:border-amber-500/40 transition-all duration-200 group">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-2xl font-black text-amber-500 font-display">02</span>
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </div>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">Match Intelligent</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Notre algorithme vous propose instantanément des mentors qualifiés et compatibles avec votre rythme d'apprentissage.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-800">
+                        <span class="text-[11px] font-semibold text-amber-400/90">Recommandations ciblées</span>
+                    </div>
+                </div>
+
+                <!-- Step 03 -->
+                <div class="card p-6 rounded-2xl bg-[#101726] border border-slate-800 flex flex-col justify-between hover:border-amber-500/40 transition-all duration-200 group">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-2xl font-black text-amber-500 font-display">03</span>
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            </div>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">Planification Flexible</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Choisissez vos créneaux en direct grâce au calendrier synchronisé. Réservation sans friction et rappels automatisés.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-800">
+                        <span class="text-[11px] font-semibold text-amber-400/90">Disponibilités 7j/7</span>
+                    </div>
+                </div>
+
+                <!-- Step 04 -->
+                <div class="card p-6 rounded-2xl bg-[#101726] border border-slate-800 flex flex-col justify-between hover:border-amber-500/40 transition-all duration-200 group">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-2xl font-black text-amber-500 font-display">04</span>
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            </div>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">Session & Évaluation</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Vivez un cours immersif avec partage d'écran et tableau interactif. Suivez vos progrès grâce aux retours continus.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-800">
+                        <span class="text-[11px] font-semibold text-amber-400/90">Progression mesurable</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    {{-- RETOURS D'EXPÉRIENCE (Screenshot 1) --}}
+    <section id="temoignages" class="py-20 bg-[#0B101B] border-t border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="inline-block px-4 py-1.5 rounded-full text-[11px] font-bold tracking-widest text-amber-500 uppercase bg-amber-500/10 border border-amber-500/20 mb-3">
+                    Retours d'expérience
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-black text-white font-display tracking-tight">
+                    Ce que disent nos apprenants et tuteurs
+                </h2>
+                <p class="text-slate-400 text-sm mt-3 leading-relaxed">
+                    Découvrez l'impact concret de TutorLink à travers les parcours inspirants de notre communauté.
+                </p>
+            </div>
+
+            <!-- 3 Testimonial Cards (Screenshot 1) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Testimonial 1 -->
+                <div class="card p-7 rounded-2xl bg-[#101726] border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1 text-amber-400 text-sm mb-4">
+                            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-300 italic leading-relaxed mb-6">
+                            &laquo; En classe préparatoire, j'avais de vraies lacunes en thermodynamique. Grâce à mon mentor sur TutorLink, j'ai validé mes concours avec mention. La flexibilité est exceptionnelle. &raquo;
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-3 pt-4 border-t border-slate-800">
+                        <div class="w-10 h-10 rounded-full bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center flex-shrink-0 shadow-md">
+                            AB
+                        </div>
+                        <div>
+                            <p class="font-bold text-white text-sm">Amina B.</p>
+                            <p class="text-xs text-slate-400">Étudiante en Ingénierie</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="card p-7 rounded-2xl bg-[#101726] border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1 text-amber-400 text-sm mb-4">
+                            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-300 italic leading-relaxed mb-6">
+                            &laquo; En tant que tuteur, TutorLink structure tout : la gestion des offres, la sécurité des paiements et le tableau virtuel. Je me concentre uniquement sur la transmission du savoir. &raquo;
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-3 pt-4 border-t border-slate-800">
+                        <div class="w-10 h-10 rounded-full bg-slate-700 text-white font-black text-xs flex items-center justify-center flex-shrink-0 shadow-md">
+                            YK
+                        </div>
+                        <div>
+                            <p class="font-bold text-white text-sm">Youssef K.</p>
+                            <p class="text-xs text-slate-400">Tuteur Maths & Data Science</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="card p-7 rounded-2xl bg-[#101726] border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1 text-amber-400 text-sm mb-4">
+                            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-300 italic leading-relaxed mb-6">
+                            &laquo; En pleine reconversion vers le développement web, avoir un mentor chevronné pour déboguer et orienter mes projets m'a fait gagner plus de six mois de travail acharné. &raquo;
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-3 pt-4 border-t border-slate-800">
+                        <div class="w-10 h-10 rounded-full bg-orange-500 text-slate-950 font-black text-xs flex items-center justify-center flex-shrink-0 shadow-md">
+                            SM
+                        </div>
+                        <div>
+                            <p class="font-bold text-white text-sm">Sarah M.</p>
+                            <p class="text-xs text-slate-400">Reconversion Professionnelle</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    {{-- FOOTER (Screenshot 1) --}}
+    <footer class="bg-[#070A10] border-t border-slate-800/80 pt-16 pb-12 text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+                <!-- Brand col -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-[#0B101B] border border-amber-500/40 flex items-center justify-center text-amber-400">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/>
+                            </svg>
+                        </div>
+                        <span class="text-lg font-black text-white font-display">Tutor<span class="text-amber-500">Link</span></span>
+                    </div>
+                    <p class="text-slate-400 leading-relaxed text-xs">
+                        L'écosystème de référence pour l'apprentissage sur mesure et le mentorat d'excellence.
+                    </p>
+                </div>
+
+                <!-- Col 2 -->
+                <div>
+                    <h4 class="font-bold uppercase tracking-wider text-slate-200 mb-4 text-xs">Navigation</h4>
+                    <ul class="space-y-2.5">
+                        <li><a href="#accueil" class="hover:text-amber-400 transition no-underline">Accueil</a></li>
+                        <li><a href="#comment-ca-marche" class="hover:text-amber-400 transition no-underline">Comment ça marche</a></li>
+                        <li><a href="#temoignages" class="hover:text-amber-400 transition no-underline">Témoignages</a></li>
+                        <li><a href="{{ route('register') }}" class="hover:text-amber-400 transition no-underline">S'inscrire</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3 -->
+                <div>
+                    <h4 class="font-bold uppercase tracking-wider text-slate-200 mb-4 text-xs">Matières & Rôles</h4>
+                    <ul class="space-y-2.5">
+                        <li><a href="{{ route('demandes.index') }}" class="hover:text-amber-400 transition no-underline">Mathématiques & Sciences</a></li>
+                        <li><a href="{{ route('demandes.index') }}" class="hover:text-amber-400 transition no-underline">Informatique & Code</a></li>
+                        <li><a href="{{ route('register', ['role' => 'tuteur']) }}" class="hover:text-amber-400 transition no-underline">Devenir Tuteur</a></li>
+                        <li><a href="{{ route('register', ['role' => 'apprenant']) }}" class="hover:text-amber-400 transition no-underline">Espace Apprenant</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4 -->
+                <div>
+                    <h4 class="font-bold uppercase tracking-wider text-slate-200 mb-4 text-xs">Légal & Contact</h4>
+                    <ul class="space-y-2.5">
+                        <li><a href="#" class="hover:text-amber-400 transition no-underline">Conditions Générales</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition no-underline">Politique de Confidentialité</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition no-underline">Sécurité & Données</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition no-underline">Support 24/7</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
+                <p>&copy; {{ date('Y') }} TutorLink Inc. Tous droits réservés.</p>
+                <div class="flex items-center gap-6">
+                    <a href="#" class="hover:text-slate-300 transition no-underline">Twitter / X</a>
+                    <a href="#" class="hover:text-slate-300 transition no-underline">LinkedIn</a>
+                    <a href="#" class="hover:text-slate-300 transition no-underline">GitHub</a>
+                    <a href="#" class="hover:text-slate-300 transition no-underline">Discord</a>
+                </div>
+            </div>
         </div>
     </footer>
 
