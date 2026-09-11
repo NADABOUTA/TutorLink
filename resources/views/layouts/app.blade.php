@@ -7,15 +7,15 @@
     <title>{{ config('app.name', 'TutorLink') }} — {{ $title ?? 'Plateforme de Soutien Scolaire' }}</title>
     <meta name="description" content="TutorLink — La plateforme de référence connectant apprenants et tuteurs particuliers au Maroc">
 
-    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-slate-50 text-slate-900">
+<body class="font-sans antialiased bg-[#fafaf9] text-[#121212] selection:bg-neutral-900 selection:text-white">
 
 <div class="app-shell" x-data="{ sidebarOpen: false }">
 
@@ -29,7 +29,7 @@
             <div class="sidebar-logo-icon">TL</div>
             <div class="flex flex-col">
                 <span class="sidebar-logo-text">Tutor<span>Link</span></span>
-                <span class="text-[10px] font-bold tracking-widest text-slate-400 uppercase -mt-1">Maroc</span>
+                <span class="text-[9px] font-bold tracking-widest text-neutral-400 uppercase -mt-0.5">Maroc · Studio</span>
             </div>
         </div>
 
@@ -102,7 +102,7 @@
                 </svg>
                 <span class="flex-1">Notifications</span>
                 @if(Auth::user()->unreadNotifications->count() > 0)
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500 text-white shadow-sm">
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-600 text-white shadow-xs">
                         {{ Auth::user()->unreadNotifications->count() }}
                     </span>
                 @endif
